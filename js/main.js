@@ -1664,7 +1664,7 @@ function initPortfolioStudio() {
   }
 
   function attachCardEditOverlays() {
-    const cardSelectors = '.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card, .act-img-box, .case-img-wrap, .id-card-frame, .holo-profile-card';
+    const cardSelectors = '.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card, .act-img-box, .case-img-wrap, .id-card-frame, .holo-profile-card, .velocity-card';
     document.querySelectorAll(cardSelectors).forEach(card => {
       if (!card.querySelector('.jf-card-edit-overlay')) {
         const ov = document.createElement('div');
@@ -1822,9 +1822,9 @@ function initPortfolioStudio() {
     }
   }
 
-  // Open Card Editor (Supports images, videos, avatars, and timeline cards)
+  // Open Card Editor (Supports images, videos, avatars, velocity cards, and timeline cards)
   window.openCardEditor = function(btn) {
-    activeEditCard = btn.closest('.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card, .act-img-box, .case-img-wrap, .id-card-frame, .holo-profile-card');
+    activeEditCard = btn.closest('.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card, .act-img-box, .case-img-wrap, .id-card-frame, .holo-profile-card, .velocity-card');
     if (!activeEditCard) return;
 
     if (!activeEditCard.getAttribute('data-card-id')) {
@@ -1847,7 +1847,7 @@ function initPortfolioStudio() {
 
     const imgEl = activeEditCard.querySelector('img') || (activeEditCard.id === 'holoProfileCard' ? document.getElementById('holoAvatarImg') : null);
     const videoEl = activeEditCard.querySelector('video');
-    const titleEl = activeEditCard.querySelector('.bento-title, h3, h4, .video-card-title, .holo-card-name, .id-card-title, .act-img-caption');
+    const titleEl = activeEditCard.querySelector('.bento-title, h3, h4, .video-card-title, .holo-card-name, .id-card-title, .act-img-caption, .velocity-badge');
     const descEl = activeEditCard.querySelector('p, .video-card-desc, .holo-card-tag');
     const behanceLink = activeEditCard.getAttribute('data-behance') || (activeEditCard.tagName === 'A' ? activeEditCard.href : '');
 
@@ -1934,6 +1934,10 @@ function initPortfolioStudio() {
     // Aceternity Timeline caption
     const actCaption = card.querySelector('.act-img-caption');
     if (actCaption && data.title) actCaption.textContent = data.title;
+
+    // Velocity Gallery badge
+    const velBadge = card.querySelector('.velocity-badge');
+    if (velBadge && data.title) velBadge.textContent = data.title;
 
     if (data.behance) {
       card.setAttribute('data-behance', data.behance);
