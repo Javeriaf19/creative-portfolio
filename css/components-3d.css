@@ -4614,7 +4614,7 @@ body.jf-edit-active [data-jf-editable="true"]:focus {
   background: rgba(82, 0, 140, 0.08);
 }
 
-/* Card Edit Overlay Button */
+/* Card Edit Overlay Button (Enabled for ALL Card Types) */
 .jf-card-edit-overlay {
   display: none;
   position: absolute;
@@ -4625,8 +4625,263 @@ body.jf-edit-active [data-jf-editable="true"]:focus {
 
 body.jf-edit-active .bento-cell .jf-card-edit-overlay,
 body.jf-edit-active .mt-card .jf-card-edit-overlay,
-body.jf-edit-active .video-card-3d .jf-card-edit-overlay {
+body.jf-edit-active .cat-img-card .jf-card-edit-overlay,
+body.jf-edit-active .video-card-3d .jf-card-edit-overlay,
+body.jf-edit-active .phone-mockup-3d .jf-card-edit-overlay,
+body.jf-edit-active .laptop-mockup-3d .jf-card-edit-overlay,
+body.jf-edit-active .velocity-card .jf-card-edit-overlay,
+body.jf-edit-active .gallery-stack-card .jf-card-edit-overlay,
+body.jf-edit-active .folder-unit .jf-card-edit-overlay {
   display: block;
+}
+
+/* Add Card / Add Media Placeholder Buttons (Visible only in Studio Active) */
+.jf-add-card-placeholder {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  background: rgba(255, 43, 133, 0.04);
+  border: 2px dashed rgba(255, 43, 133, 0.5);
+  border-radius: 18px;
+  color: #FF70A6;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 20px;
+  text-align: center;
+  gap: 8px;
+}
+
+body.jf-edit-active .jf-add-card-placeholder {
+  display: flex;
+}
+
+.jf-add-card-placeholder:hover {
+  background: rgba(255, 43, 133, 0.12);
+  border-color: #FF2B85;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(255, 43, 133, 0.2);
+}
+
+/* ============================================================
+   FRAMER GALLERY STACK (3D FANNING DECK)
+   ============================================================ */
+.gallery-stack-viewport {
+  position: relative;
+  max-width: 680px;
+  margin: 0 auto;
+  perspective: 1200px;
+  padding: 40px 10px 20px;
+}
+
+.gallery-stack-deck {
+  position: relative;
+  height: 380px;
+  width: 100%;
+}
+
+.gallery-stack-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #110E1C;
+  border: 1.5px solid rgba(255, 43, 133, 0.3);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease, z-index 0.6s ease;
+  will-change: transform, opacity;
+}
+
+.gallery-stack-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gallery-stack-card:hover img {
+  transform: scale(1.04);
+}
+
+.stack-card-meta {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  background: linear-gradient(to top, rgba(8, 6, 18, 0.95) 0%, rgba(8, 6, 18, 0.6) 60%, transparent 100%);
+  color: #fff;
+}
+
+.stack-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #FF2A85;
+  border-radius: 999px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.stack-card-meta h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+  color: #fff;
+}
+
+.stack-card-meta p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Stack 3D Depth Positions */
+.gallery-stack-card.stack-pos-0 {
+  transform: translateY(0px) scale(1) translateZ(0px) rotate(0deg);
+  z-index: 10;
+  opacity: 1;
+}
+
+.gallery-stack-card.stack-pos-1 {
+  transform: translateY(-22px) scale(0.93) translateZ(-60px) rotate(3deg);
+  z-index: 8;
+  opacity: 0.85;
+}
+
+.gallery-stack-card.stack-pos-2 {
+  transform: translateY(-44px) scale(0.86) translateZ(-120px) rotate(-3deg);
+  z-index: 6;
+  opacity: 0.7;
+}
+
+.gallery-stack-card.stack-pos-3 {
+  transform: translateY(-66px) scale(0.79) translateZ(-180px) rotate(4deg);
+  z-index: 4;
+  opacity: 0.55;
+}
+
+.gallery-stack-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.stack-nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #110E1C;
+  border: 1px solid rgba(255, 43, 133, 0.4);
+  color: #FF70A6;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.stack-nav-btn:hover {
+  background: #FF2A85;
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(255, 42, 133, 0.4);
+}
+
+.stack-counter {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #52008C;
+}
+
+/* ============================================================
+   FRAMER ROUNDEL PRO (CIRCULAR BADGE RING)
+   ============================================================ */
+.roundel-center-stage {
+  position: relative;
+  width: 360px;
+  height: 360px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roundel-orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 42, 133, 0.35);
+  animation: roundelSpin 35s linear infinite;
+  transition: animation-play-state 0.3s ease;
+}
+
+.roundel-center-stage:hover .roundel-orbit-ring {
+  animation-play-state: paused;
+}
+
+@keyframes roundelSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.roundel-badge-item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -18px;
+  margin-left: -55px;
+  width: 110px;
+  text-align: center;
+  background: #120D22;
+  border: 1px solid #FF2A85;
+  color: #FFF;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.roundel-core-emblem {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FF2A85 0%, #52008C 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 0 35px rgba(255, 42, 133, 0.5);
+  z-index: 5;
+}
+
+.roundel-core-emblem strong {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.roundel-core-emblem small {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
 }
 
 .jf-btn-card-edit {

@@ -1406,9 +1406,61 @@ function initVideoCarouselModal() {
 }
 
 /* ============================================================
-   14. JAVERIA'S LIVE PORTFOLIO STUDIO CMS (ADMIN EDIT MODE)
+   14. FRAMER 3D GALLERY STACK INTERACTION
+   ============================================================ */
+function initGalleryStack() {
+  const deck = document.getElementById('galleryStackDeck');
+  const prevBtn = document.getElementById('btnStackPrev');
+  const nextBtn = document.getElementById('btnStackNext');
+  const counter = document.getElementById('stackCounter');
+  if (!deck) return;
+
+  const cards = Array.from(deck.querySelectorAll('.gallery-stack-card'));
+  const total = cards.length;
+  let activeIndex = 0;
+
+  function updateStack() {
+    cards.forEach((card, idx) => {
+      const pos = (idx - activeIndex + total) % total;
+      card.className = `gallery-stack-card stack-pos-${pos}`;
+    });
+    if (counter) counter.textContent = `${activeIndex + 1} / ${total}`;
+  }
+
+  function nextCard() {
+    activeIndex = (activeIndex + 1) % total;
+    updateStack();
+  }
+
+  function prevCard() {
+    activeIndex = (activeIndex - 1 + total) % total;
+    updateStack();
+  }
+
+  if (nextBtn) nextBtn.addEventListener('click', nextCard);
+  if (prevBtn) prevBtn.addEventListener('click', prevCard);
+
+  cards.forEach((card, idx) => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.jf-card-edit-overlay') || e.target.closest('.jf-btn-card-edit')) return;
+      if (idx === activeIndex) {
+        nextCard();
+      } else {
+        activeIndex = idx;
+        updateStack();
+      }
+    });
+  });
+
+  updateStack();
+}
+
+/* ============================================================
+   15. JAVERIA'S LIVE PORTFOLIO STUDIO CMS (ADMIN EDIT MODE)
    ============================================================ */
 let activeEditCard = null;
+let activeAddTargetContainer = null;
+let activeAddMediaType = 'image';
 
 function initPortfolioStudio() {
   const fab = document.getElementById('jfStudioFab');
@@ -1418,22 +1470,43 @@ function initPortfolioStudio() {
   const pinCancel = document.getElementById('btnPinCancel');
   const pinError = document.getElementById('jfPinError');
   const btnSaveLive = document.getElementById('btnStudioSaveLive');
+  const btnAddGallery = document.getElementById('btnStudioAddGallery');
   const btnExport = document.getElementById('btnStudioExport');
   const btnReset = document.getElementById('btnStudioReset');
   const btnLock = document.getElementById('btnStudioLock');
 
+  // Card Editor Modal Elements
   const cardModal = document.getElementById('jfCardEditorModal');
   const cardForm = document.getElementById('jfCardEditorForm');
+  const cardHeading = document.getElementById('ceModalHeading');
   const cardClose = document.getElementById('btnCardEditorClose');
   const cardCancel = document.getElementById('btnCardEditorCancel');
   const cardDelete = document.getElementById('btnCardEditorDelete');
 
+  const ceMediaType = document.getElementById('ceMediaType');
+  const ceImageFields = document.getElementById('ceImageFieldsGroup');
+  const ceVideoFields = document.getElementById('ceVideoFieldsGroup');
+
   const ceTitle = document.getElementById('ceTitle');
+  const ceDesc = document.getElementById('ceDesc');
   const ceImageUrl = document.getElementById('ceImageUrl');
   const ceImageFile = document.getElementById('ceImageFile');
+  const ceVideoUrl = document.getElementById('ceVideoUrl');
+  const ceVideoFile = document.getElementById('ceVideoFile');
+  const ceVideoPoster = document.getElementById('ceVideoPoster');
   const ceBehanceLink = document.getElementById('ceBehanceLink');
   const ceSpanSelect = document.getElementById('ceSpanSelect');
   const ceFocalSelect = document.getElementById('ceFocalSelect');
+
+  // New Gallery Modal Elements
+  const newGalModal = document.getElementById('jfNewGalleryModal');
+  const newGalForm = document.getElementById('jfNewGalleryForm');
+  const newGalClose = document.getElementById('btnNewGalleryClose');
+  const newGalCancel = document.getElementById('btnNewGalleryCancel');
+  const ngTitle = document.getElementById('ngTitle');
+  const ngSub = document.getElementById('ngSub');
+  const ngCategory = document.getElementById('ngCategorySelect');
+  const ngBehance = document.getElementById('ngBehance');
 
   // Secure cryptographic hash comparison (never expose plain-text PIN in repository)
   const PIN_HASH = '483029d526219f816e8e8f6a9de07b422633dba180ffc26faac22862a017519f';
@@ -1444,6 +1517,15 @@ function initPortfolioStudio() {
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Toggle image vs video fields in card editor
+  if (ceMediaType) {
+    ceMediaType.addEventListener('change', () => {
+      const isVideo = ceMediaType.value === 'video';
+      if (ceImageFields) ceImageFields.style.display = isVideo ? 'none' : 'block';
+      if (ceVideoFields) ceVideoFields.style.display = isVideo ? 'block' : 'none';
+    });
   }
 
   restoreSavedEdits();
@@ -1510,28 +1592,48 @@ function initPortfolioStudio() {
     document.body.classList.add('jf-edit-active');
     if (fab) fab.style.display = 'flex';
 
-    const editables = document.querySelectorAll('[data-jf-editable="true"]');
-    editables.forEach((el, idx) => {
+    // Enable inline editing for ALL headings, paragraphs, descriptions, badges across entire website
+    const allTextTargets = document.querySelectorAll(
+      'h1, h2, h3, h4, h5, p, .cat-badge, .cat-sub, .folder-name, .bento-tag, .bento-title, .stat-num, .stat-label, .mt-tag-brand, .mt-stat-pill'
+    );
+    allTextTargets.forEach((el, idx) => {
+      if (el.closest('#jfStudioFab') || el.closest('.jf-modal-backdrop')) return;
       el.setAttribute('contenteditable', 'true');
-      if (!el.getAttribute('data-jf-id')) el.setAttribute('data-jf-id', `jf-text-${idx}`);
+      el.setAttribute('data-jf-editable', 'true');
+      if (!el.getAttribute('data-jf-id')) el.setAttribute('data-jf-id', `jf-txt-${idx}`);
       el.addEventListener('blur', saveTextEdits);
     });
+
+    // Ensure all cards have edit overlays
+    attachCardEditOverlays();
   }
 
   function disableStudioMode() {
     document.body.classList.remove('jf-edit-active');
     if (fab) fab.style.display = 'none';
     sessionStorage.removeItem('jf_studio_auth');
-    document.querySelectorAll('[data-jf-editable="true"]').forEach(el => {
+    document.querySelectorAll('[contenteditable]').forEach(el => {
       el.removeAttribute('contenteditable');
     });
   }
 
   if (btnLock) btnLock.addEventListener('click', disableStudioMode);
 
+  function attachCardEditOverlays() {
+    const cardSelectors = '.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card';
+    document.querySelectorAll(cardSelectors).forEach(card => {
+      if (!card.querySelector('.jf-card-edit-overlay')) {
+        const ov = document.createElement('div');
+        ov.className = 'jf-card-edit-overlay';
+        ov.innerHTML = '<button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button>';
+        card.appendChild(ov);
+      }
+    });
+  }
+
   function saveTextEdits() {
     const data = {};
-    document.querySelectorAll('[data-jf-editable="true"]').forEach(el => {
+    document.querySelectorAll('[data-jf-id]').forEach(el => {
       const id = el.getAttribute('data-jf-id');
       if (id) data[id] = el.innerHTML;
     });
@@ -1543,8 +1645,9 @@ function initPortfolioStudio() {
       const savedText = localStorage.getItem('jf_text_edits');
       if (savedText) {
         const data = JSON.parse(savedText);
-        document.querySelectorAll('[data-jf-editable="true"]').forEach((el, idx) => {
-          const id = el.getAttribute('data-jf-id') || `jf-text-${idx}`;
+        document.querySelectorAll('h1, h2, h3, h4, h5, p, .cat-badge, .cat-sub, .folder-name, .bento-tag, .bento-title, .stat-num, .stat-label, .mt-tag-brand, .mt-stat-pill').forEach((el, idx) => {
+          if (el.closest('#jfStudioFab') || el.closest('.jf-modal-backdrop')) return;
+          const id = el.getAttribute('data-jf-id') || `jf-txt-${idx}`;
           el.setAttribute('data-jf-id', id);
           if (data[id]) el.innerHTML = data[id];
         });
@@ -1558,26 +1661,59 @@ function initPortfolioStudio() {
           if (cardEl) applyCardData(cardEl, cardsData[cardId]);
         });
       }
+
+      // Restore custom dynamically created galleries
+      const savedGalleries = localStorage.getItem('jf_custom_galleries');
+      if (savedGalleries) {
+        const galList = JSON.parse(savedGalleries);
+        galList.forEach(gal => renderNewGallerySection(gal, false));
+      }
     } catch (e) {
       console.warn('Error loading saved edits:', e);
     }
   }
 
+  // Open Card Editor (Supports both images and videos!)
   window.openCardEditor = function(btn) {
-    activeEditCard = btn.closest('.bento-cell, .mt-card, .video-card-3d');
+    activeEditCard = btn.closest('.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card');
     if (!activeEditCard) return;
 
     if (!activeEditCard.getAttribute('data-card-id')) {
       activeEditCard.setAttribute('data-card-id', `card-${Date.now()}-${Math.floor(Math.random()*1000)}`);
     }
 
+    if (cardHeading) cardHeading.textContent = 'Edit Project Card & Media';
+    if (cardDelete) cardDelete.style.display = 'inline-block';
+
+    const isVideoCard = activeEditCard.classList.contains('video-card-3d') ||
+                        activeEditCard.classList.contains('phone-mockup-3d') ||
+                        activeEditCard.classList.contains('laptop-mockup-3d') ||
+                        activeEditCard.hasAttribute('data-video') ||
+                        activeEditCard.querySelector('video') !== null;
+
+    if (ceMediaType) {
+      ceMediaType.value = isVideoCard ? 'video' : 'image';
+      ceMediaType.dispatchEvent(new Event('change'));
+    }
+
     const imgEl = activeEditCard.querySelector('img');
-    const titleEl = activeEditCard.querySelector('.bento-title, h3, .video-card-title');
+    const videoEl = activeEditCard.querySelector('video');
+    const titleEl = activeEditCard.querySelector('.bento-title, h3, h4, .video-card-title');
+    const descEl = activeEditCard.querySelector('p, .video-card-desc');
     const behanceLink = activeEditCard.getAttribute('data-behance') || (activeEditCard.tagName === 'A' ? activeEditCard.href : '');
 
     if (ceTitle) ceTitle.value = titleEl ? titleEl.textContent.trim() : '';
+    if (ceDesc) ceDesc.value = descEl ? descEl.textContent.trim() : '';
+
     if (ceImageUrl) ceImageUrl.value = imgEl ? imgEl.getAttribute('src') : '';
     if (ceImageFile) ceImageFile.value = '';
+
+    const videoSrc = activeEditCard.getAttribute('data-video') || (videoEl ? (videoEl.getAttribute('src') || (videoEl.querySelector('source') ? videoEl.querySelector('source').getAttribute('src') : '')) : '');
+    const posterSrc = videoEl ? videoEl.getAttribute('poster') : (imgEl ? imgEl.getAttribute('src') : '');
+    if (ceVideoUrl) ceVideoUrl.value = videoSrc || '';
+    if (ceVideoFile) ceVideoFile.value = '';
+    if (ceVideoPoster) ceVideoPoster.value = posterSrc || '';
+
     if (ceBehanceLink) ceBehanceLink.value = behanceLink || '';
 
     if (ceSpanSelect) {
@@ -1588,9 +1724,36 @@ function initPortfolioStudio() {
     if (cardModal) cardModal.style.display = 'flex';
   };
 
+  // Open "Add New Card" dialog for any gallery container
+  window.openNewCardDialog = function(btnPlaceholder, defaultMediaType = 'image') {
+    activeAddTargetContainer = btnPlaceholder.parentElement;
+    activeAddMediaType = defaultMediaType;
+    activeEditCard = null;
+
+    if (cardHeading) cardHeading.textContent = `Add New ${defaultMediaType === 'video' ? 'Video Showcase' : 'Project Card'}`;
+    if (cardDelete) cardDelete.style.display = 'none';
+
+    if (ceMediaType) {
+      ceMediaType.value = defaultMediaType;
+      ceMediaType.dispatchEvent(new Event('change'));
+    }
+
+    if (ceTitle) ceTitle.value = '';
+    if (ceDesc) ceDesc.value = '';
+    if (ceImageUrl) ceImageUrl.value = '';
+    if (ceImageFile) ceImageFile.value = '';
+    if (ceVideoUrl) ceVideoUrl.value = '';
+    if (ceVideoFile) ceVideoFile.value = '';
+    if (ceVideoPoster) ceVideoPoster.value = '';
+    if (ceBehanceLink) ceBehanceLink.value = '';
+
+    if (cardModal) cardModal.style.display = 'flex';
+  };
+
   function closeCardModal() {
     if (cardModal) cardModal.style.display = 'none';
     activeEditCard = null;
+    activeAddTargetContainer = null;
   }
 
   if (cardClose) cardClose.addEventListener('click', closeCardModal);
@@ -1612,82 +1775,270 @@ function initPortfolioStudio() {
   }
 
   function applyCardData(card, data) {
-    const imgEl = card.querySelector('img');
-    const titleEl = card.querySelector('.bento-title, h3, .video-card-title');
-    if (imgEl && data.img) imgEl.src = data.img;
+    const isVideo = data.mediaType === 'video' || (data.videoUrl && data.videoUrl.length > 0);
+    const titleEl = card.querySelector('.bento-title, h3, h4, .video-card-title');
+    const descEl = card.querySelector('p, .video-card-desc');
+
     if (titleEl && data.title) titleEl.textContent = data.title;
+    if (descEl && data.desc) descEl.textContent = data.desc;
+
     if (data.behance) {
       card.setAttribute('data-behance', data.behance);
       if (card.tagName === 'A') card.href = data.behance;
+      const arrowLink = card.querySelector('.mt-arrow');
+      if (arrowLink && arrowLink.tagName === 'A') arrowLink.href = data.behance;
     }
+
     if (data.span) {
       card.classList.remove('bento-span-1x1', 'bento-span-2x1', 'bento-span-1x2', 'bento-span-2x2');
       card.classList.add(data.span);
     }
-    if (imgEl && data.focal) {
-      imgEl.style.objectPosition = data.focal;
+
+    if (isVideo) {
+      card.setAttribute('data-video', data.videoUrl || '');
+      const videoEl = card.querySelector('video');
+      if (videoEl) {
+        videoEl.src = data.videoUrl || '';
+        if (data.videoPoster) videoEl.poster = data.videoPoster;
+      }
+      const imgEl = card.querySelector('img');
+      if (imgEl && data.videoPoster) imgEl.src = data.videoPoster;
+    } else {
+      const imgEl = card.querySelector('img');
+      if (imgEl && data.img) imgEl.src = data.img;
+      if (imgEl && data.focal) imgEl.style.objectPosition = data.focal;
     }
   }
 
+  // Handle saving edits OR adding a new card
   if (cardForm) {
     cardForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (!activeEditCard) return;
 
-      const cardId = activeEditCard.getAttribute('data-card-id');
-      const processSave = (imageSrc) => {
+      const mediaType = ceMediaType ? ceMediaType.value : 'image';
+      const isVideo = mediaType === 'video';
+
+      const executeSave = (mediaSrc) => {
         const cardData = {
-          title: ceTitle ? ceTitle.value.trim() : '',
-          img: imageSrc,
+          mediaType: mediaType,
+          title: ceTitle ? ceTitle.value.trim() : 'New Project',
+          desc: ceDesc ? ceDesc.value.trim() : '',
+          img: isVideo ? (ceVideoPoster ? ceVideoPoster.value.trim() : '') : mediaSrc,
+          videoUrl: isVideo ? mediaSrc : '',
+          videoPoster: ceVideoPoster ? ceVideoPoster.value.trim() : '',
           behance: ceBehanceLink ? ceBehanceLink.value.trim() : '',
           span: ceSpanSelect ? ceSpanSelect.value : 'bento-span-1x1',
           focal: ceFocalSelect ? ceFocalSelect.value : 'center'
         };
 
-        applyCardData(activeEditCard, cardData);
+        if (activeEditCard) {
+          // Editing existing card
+          const cardId = activeEditCard.getAttribute('data-card-id');
+          applyCardData(activeEditCard, cardData);
 
-        const saved = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
-        saved[cardId] = cardData;
-        localStorage.setItem('jf_card_edits', JSON.stringify(saved));
+          const saved = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
+          saved[cardId] = cardData;
+          localStorage.setItem('jf_card_edits', JSON.stringify(saved));
+        } else if (activeAddTargetContainer) {
+          // Creating brand new card
+          const newCardId = `card-new-${Date.now()}`;
+          const isBento = activeAddTargetContainer.classList.contains('bento-gallery-grid');
+          const isVideoContainer = activeAddTargetContainer.classList.contains('video-turnstile-grid') || isVideo;
+
+          let newCard;
+          if (isVideoContainer) {
+            newCard = document.createElement('div');
+            newCard.className = 'video-card-3d';
+            newCard.setAttribute('data-card-id', newCardId);
+            newCard.setAttribute('data-video', cardData.videoUrl);
+            newCard.setAttribute('data-title', cardData.title);
+            newCard.innerHTML = `
+              <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+              <div class="video-card-thumb">
+                <img src="${cardData.videoPoster || 'assets/portfolio_works/aero-1.png'}" alt="${cardData.title}" loading="lazy">
+                <div class="video-play-badge">▶</div>
+              </div>
+              <div class="video-card-meta">
+                <span class="video-card-tag">NEW VIDEO</span>
+                <h4 class="video-card-title">${cardData.title}</h4>
+                <p class="video-card-desc">${cardData.desc || 'High engagement commercial video showcase.'}</p>
+              </div>
+            `;
+          } else if (isBento) {
+            newCard = document.createElement('div');
+            newCard.className = `bento-cell ${cardData.span}`;
+            newCard.setAttribute('data-card-id', newCardId);
+            newCard.setAttribute('data-lightbox', cardData.img);
+            newCard.setAttribute('data-title', cardData.title);
+            if (cardData.behance) newCard.setAttribute('data-behance', cardData.behance);
+            newCard.innerHTML = `
+              <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+              <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="bento-img" loading="lazy" style="object-position:${cardData.focal};">
+              <div class="bento-overlay">
+                <span class="bento-tag">Bento Feature</span>
+                <p class="bento-title">${cardData.title}</p>
+              </div>
+            `;
+          } else {
+            // Standard Motion Tile / Showcase Card
+            newCard = document.createElement('div');
+            newCard.className = 'mt-card';
+            newCard.setAttribute('data-card-id', newCardId);
+            newCard.setAttribute('data-cat', 'stationery');
+            newCard.setAttribute('data-lightbox', cardData.img);
+            newCard.setAttribute('data-title', cardData.title);
+            if (cardData.behance) newCard.setAttribute('data-behance', cardData.behance);
+            newCard.innerHTML = `
+              <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+              <div class="mt-card-media">
+                <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="mt-img" loading="lazy" style="object-position:${cardData.focal};">
+                <div class="mt-badge-top"><span class="mt-tag-brand">CUSTOM WORK</span></div>
+              </div>
+              <div class="mt-card-info">
+                <div class="mt-title-row">
+                  <h3>${cardData.title}</h3>
+                  <span class="mt-arrow">↗</span>
+                </div>
+                <p>${cardData.desc || 'Custom design showcase card.'}</p>
+              </div>
+            `;
+          }
+
+          // Insert before placeholder button
+          const placeholder = activeAddTargetContainer.querySelector('.jf-add-card-placeholder');
+          if (placeholder) {
+            activeAddTargetContainer.insertBefore(newCard, placeholder);
+          } else {
+            activeAddTargetContainer.appendChild(newCard);
+          }
+
+          const saved = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
+          saved[newCardId] = cardData;
+          localStorage.setItem('jf_card_edits', JSON.stringify(saved));
+        }
 
         closeCardModal();
       };
 
-      if (ceImageFile && ceImageFile.files && ceImageFile.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (re) => processSave(re.target.result);
-        reader.readAsDataURL(ceImageFile.files[0]);
+      if (isVideo) {
+        if (ceVideoFile && ceVideoFile.files && ceVideoFile.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (re) => executeSave(re.target.result);
+          reader.readAsDataURL(ceVideoFile.files[0]);
+        } else {
+          executeSave(ceVideoUrl ? ceVideoUrl.value.trim() : '');
+        }
       } else {
-        processSave(ceImageUrl ? ceImageUrl.value.trim() : '');
+        if (ceImageFile && ceImageFile.files && ceImageFile.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (re) => executeSave(re.target.result);
+          reader.readAsDataURL(ceImageFile.files[0]);
+        } else {
+          executeSave(ceImageUrl ? ceImageUrl.value.trim() : '');
+        }
       }
     });
   }
 
+  // ==========================================
+  // CUSTOM NEW GALLERY SECTION CREATION
+  // ==========================================
+  if (btnAddGallery) {
+    btnAddGallery.addEventListener('click', () => {
+      if (newGalModal) newGalModal.style.display = 'flex';
+    });
+  }
+
+  function closeNewGalleryModal() {
+    if (newGalModal) newGalModal.style.display = 'none';
+  }
+
+  if (newGalClose) newGalClose.addEventListener('click', closeNewGalleryModal);
+  if (newGalCancel) newGalCancel.addEventListener('click', closeNewGalleryModal);
+
+  function renderNewGallerySection(galData, saveToStorage = true) {
+    const targetParent = document.getElementById(galData.category) || document.getElementById('work');
+    if (!targetParent) return;
+
+    const galId = galData.id || `custom-gal-${Date.now()}`;
+    const newSection = document.createElement('div');
+    newSection.className = 'bento-gallery-wrap';
+    newSection.id = galId;
+    newSection.style.marginTop = '32px';
+
+    newSection.innerHTML = `
+      <div class="bento-gallery-header">
+        <div class="bento-project-meta">
+          <h4 data-jf-editable="true">${galData.title}</h4>
+          <span data-jf-editable="true">${galData.sub || 'Custom Bento Showcase'}</span>
+        </div>
+        ${galData.behance ? `
+          <a href="${galData.behance}" target="_blank" rel="noopener" class="btn-bento-behance">
+            <span>View On Behance</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </a>
+        ` : ''}
+      </div>
+      <div class="bento-gallery-grid">
+        <div class="bento-cell bento-span-2x1" data-lightbox="assets/portfolio_works/notey-cover.webp" data-title="${galData.title}">
+          <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+          <img src="assets/portfolio_works/notey-cover.webp" alt="${galData.title}" class="bento-img" loading="lazy">
+          <div class="bento-overlay">
+            <span class="bento-tag">Featured</span>
+            <p class="bento-title">${galData.title}</p>
+          </div>
+        </div>
+        <div class="jf-add-card-placeholder" onclick="openNewCardDialog(this, 'bento-cell')">
+          <span style="font-size:1.6rem;">+</span>
+          <span>Add Bento Card</span>
+        </div>
+      </div>
+    `;
+
+    targetParent.appendChild(newSection);
+
+    if (saveToStorage) {
+      const savedGals = JSON.parse(localStorage.getItem('jf_custom_galleries') || '[]');
+      savedGals.push({ ...galData, id: galId });
+      localStorage.setItem('jf_custom_galleries', JSON.stringify(savedGals));
+    }
+  }
+
+  if (newGalForm) {
+    newGalForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const galData = {
+        title: ngTitle ? ngTitle.value.trim() : 'Custom Gallery',
+        sub: ngSub ? ngSub.value.trim() : 'Custom Bento Showcase',
+        category: ngCategory ? ngCategory.value : 'cat-branding',
+        behance: ngBehance ? ngBehance.value.trim() : ''
+      };
+
+      renderNewGallerySection(galData, true);
+      closeNewGalleryModal();
+      alert(`🎉 New Gallery "${galData.title}" created successfully! Click "+ Add Bento Card" or "✎ Edit" to add your media.`);
+    });
+  }
+
+  // 1-Click Export Live Clean HTML
   if (btnSaveLive) {
     btnSaveLive.addEventListener('click', async () => {
       try {
-        // 1. Clone document to create a clean production export
         const docClone = document.documentElement.cloneNode(true);
-
-        // 2. Remove edit active classes and attributes from clone
         const cloneBody = docClone.querySelector('body') || docClone;
         cloneBody.classList.remove('jf-edit-active');
 
-        // Remove contenteditable attributes
-        const editables = docClone.querySelectorAll('[contenteditable]');
-        editables.forEach(el => el.removeAttribute('contenteditable'));
+        // Remove temporary attributes
+        docClone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+        docClone.querySelectorAll('.jf-card-edit-overlay').forEach(el => el.remove());
 
-        // Hide studio FAB and modals in clean HTML
         const cloneFab = docClone.querySelector('#jfStudioFab');
         if (cloneFab) cloneFab.style.display = 'none';
 
-        const cloneModals = docClone.querySelectorAll('.jf-modal-backdrop');
-        cloneModals.forEach(m => m.style.display = 'none');
+        docClone.querySelectorAll('.jf-modal-backdrop').forEach(m => m.style.display = 'none');
 
-        // 3. Serialize to full HTML string
         const htmlContent = '<!DOCTYPE html>\n' + docClone.outerHTML;
 
-        // 4. Offer modern File System Save picker if supported, or instant download fallback
         if ('showSaveFilePicker' in window) {
           try {
             const handle = await window.showSaveFilePicker({
@@ -1703,12 +2054,10 @@ function initPortfolioStudio() {
             alert('🎉 Success! Your live index.html file has been saved with all changes permanently baked in!');
             return;
           } catch (pickerErr) {
-            if (pickerErr.name === 'AbortError') return; // User cancelled
-            // Otherwise fallback to regular download
+            if (pickerErr.name === 'AbortError') return;
           }
         }
 
-        // Fallback: regular file download
         const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1718,7 +2067,7 @@ function initPortfolioStudio() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        alert('🎉 index.html downloaded! Replace this file in your portfolio folder, and all changes will be 100% permanent on your live website for everyone!');
+        alert('🎉 index.html downloaded! Replace this file in your portfolio repository, and all changes will be 100% permanent on your live website for everyone!');
       } catch (err) {
         console.error('Error exporting live HTML:', err);
         alert('Export failed: ' + err.message);
@@ -1731,7 +2080,8 @@ function initPortfolioStudio() {
       const backup = {
         exportedAt: new Date().toISOString(),
         textEdits: JSON.parse(localStorage.getItem('jf_text_edits') || '{}'),
-        cardEdits: JSON.parse(localStorage.getItem('jf_card_edits') || '{}')
+        cardEdits: JSON.parse(localStorage.getItem('jf_card_edits') || '{}'),
+        customGalleries: JSON.parse(localStorage.getItem('jf_custom_galleries') || '[]')
       };
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -1748,6 +2098,7 @@ function initPortfolioStudio() {
       if (confirm('Reset all website edits and restore original default data?')) {
         localStorage.removeItem('jf_text_edits');
         localStorage.removeItem('jf_card_edits');
+        localStorage.removeItem('jf_custom_galleries');
         sessionStorage.removeItem('jf_studio_auth');
         window.location.reload();
       }
@@ -1779,6 +2130,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // New modules:
   initFolderBehanceLinks();
   initVelocityGallery();
+  initGalleryStack();
   initIosVideoPlayer();
   initVideoCarouselModal();
   initPortfolioStudio();
