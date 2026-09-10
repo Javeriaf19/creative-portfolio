@@ -1,6 +1,6 @@
-# ✨ Javeria Fatima — Creative Portfolio & Motion Showcase
+# ✨ Javeria Farhan — Creative Portfolio & Motion Showcase
 
-A high-performance, responsive portfolio website crafted for **Javeria Fatima** (Graphic Designer, Visual Artist & Creative Director based in Lahore, Pakistan).
+A high-performance, responsive portfolio website crafted for **Javeria Farhan** (Graphic Designer, Visual Artist & Creative Director based in Lahore, Pakistan).
 
 Designed with high-contrast aesthetic balance, 3D interactive elements, Framer-inspired motion components, and an in-browser live studio editor.
 
@@ -84,7 +84,7 @@ start index.html
 
 ## 👩‍🎨 Credits & Contact
 
-- **Designer & Creator:** Javeria Fatima
+- **Designer & Creator:** Javeria Farhan
 - **Location:** Lahore, Pakistan
 - **Specialization:** Brand Identity, Social Media Design, Motion Graphics & Visual Direction
 - **Behance:** [behance.net/javeriafarhan1](https://www.behance.net/javeriafarhan1)
