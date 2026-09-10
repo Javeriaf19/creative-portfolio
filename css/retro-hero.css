@@ -1,0 +1,41 @@
+/* ==========================================================================
+   Y2K RETRO COMPUTER HERO
+   ========================================================================== */
+
+/* ===== HERO BASE ===== */
+.slide1-hero {
+  position: relative;
+  width: 100%;
+  background-color: #FAF5F7;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
+/* ===== IMAGE WRAPPER ===== */
+.hero-img-wrap {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  animation: heroFadeIn 1s ease-out;
+}
+
+.hero-retro-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+@keyframes heroFadeIn {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

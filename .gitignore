@@ -1,0 +1,9 @@
+﻿# Dependencies
+node_modules/
+package-lock.json
+
+# Temporary & scratch files
+scratch_behance.json
+*.log
+.DS_Store
+Thumbs.db
