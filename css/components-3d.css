@@ -4698,8 +4698,25 @@ body.jf-edit-active .phone-mockup-3d .jf-card-edit-overlay,
 body.jf-edit-active .laptop-mockup-3d .jf-card-edit-overlay,
 body.jf-edit-active .velocity-card .jf-card-edit-overlay,
 body.jf-edit-active .gallery-stack-card .jf-card-edit-overlay,
-body.jf-edit-active .folder-unit .jf-card-edit-overlay {
+body.jf-edit-active .folder-unit .jf-card-edit-overlay,
+body.jf-edit-active .act-img-box .jf-card-edit-overlay,
+body.jf-edit-active .holo-profile-card .jf-card-edit-overlay,
+body.jf-edit-active .case-img-wrap .jf-card-edit-overlay,
+body.jf-edit-active .id-card-frame .jf-card-edit-overlay,
+body.jf-edit-active .c360-center-card .jf-card-edit-overlay,
+body.jf-edit-active .flipbook-image-stage .jf-card-edit-overlay {
   display: block;
+}
+
+body.jf-edit-active .jf-add-360-btn {
+  display: inline-block !important;
+}
+
+body.jf-edit-active .p-chip {
+  cursor: pointer;
+  outline: 2px dashed #FF2B85;
+  outline-offset: 3px;
+  position: relative;
 }
 
 /* Add Card / Add Media Placeholder Buttons (Visible only in Studio Active) */
@@ -4876,79 +4893,199 @@ body.jf-edit-active .jf-add-card-placeholder {
 }
 
 /* ============================================================
-   FRAMER ROUNDEL PRO (CIRCULAR BADGE RING)
+   DUAL CLEAN IMAGE FLIPBOOKS (NOTEYSTUFF & MYKITAB.PK)
    ============================================================ */
-.roundel-center-stage {
-  position: relative;
-  width: 360px;
-  height: 360px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.dual-flipbook-container {
+  width: 100%;
+  margin-top: 45px;
 }
 
-.roundel-orbit-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 1px dashed rgba(255, 42, 133, 0.35);
-  animation: roundelSpin 35s linear infinite;
-  transition: animation-play-state 0.3s ease;
+.dual-flipbook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 32px;
 }
 
-.roundel-center-stage:hover .roundel-orbit-ring {
-  animation-play-state: paused;
-}
-
-@keyframes roundelSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.roundel-badge-item {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -18px;
-  margin-left: -55px;
-  width: 110px;
-  text-align: center;
-  background: #120D22;
-  border: 1px solid #FF2A85;
-  color: #FFF;
-  border-radius: 999px;
-  padding: 6px 14px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-}
-
-.roundel-core-emblem {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #FF2A85 0%, #52008C 100%);
+.flipbook-card-item {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.06);
+  padding: 24px;
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.flipbook-card-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
+}
+
+.flipbook-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.flipbook-brand-badge {
+  color: #FFF;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.08em;
+}
+
+.flipbook-brand-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111;
+  flex: 1;
+  margin-left: 12px;
+}
+
+.flipbook-page-counter {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #888;
+}
+
+.flipbook-image-stage {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #F5F3F7;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  box-shadow: 0 0 35px rgba(255, 42, 133, 0.5);
-  z-index: 5;
+  perspective: 1000px;
 }
 
-.roundel-core-emblem strong {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.4rem;
-  line-height: 1;
+.flipbook-page-spread {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+  transform-style: preserve-3d;
 }
 
-.roundel-core-emblem small {
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
-  opacity: 0.85;
+.flipbook-active-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  cursor: zoom-in;
+  transition: opacity 0.3s ease;
+}
+
+.flipbook-nav-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  padding: 0 4px;
+}
+
+.flip-btn {
+  background: #0D0A1A;
+  color: #FFF;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.flip-btn:hover {
+  background: #FF2B85;
+  transform: translateY(-1px);
+}
+
+.flip-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.flip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.flip-dot.active {
+  background: #FF2B85;
+  width: 20px;
+  border-radius: 6px;
+}
+
+/* ============================================================
+   SECTION REORDERING TOOLBAR
+   ============================================================ */
+.jf-section-reorder-bar {
+  display: none;
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  z-index: 1000;
+  background: rgba(10, 8, 20, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 43, 133, 0.4);
+  padding: 4px 10px;
+  border-radius: 24px;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+body.jf-edit-active section {
+  position: relative;
+}
+
+body.jf-edit-active .jf-section-reorder-bar {
+  display: inline-flex;
+}
+
+.jf-reorder-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFF;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jf-reorder-btn:hover {
+  background: #FF2B85;
+  border-color: #FF2B85;
+  transform: translateY(-1px);
+}
+
+.jf-section-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  color: #FFB3D1;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .jf-btn-card-edit {
@@ -5058,3 +5195,121 @@ body.jf-edit-active .jf-add-card-placeholder {
   gap: 12px;
   margin-top: 24px;
 }
+
+/* Studio Folder & 360 Add Controls */
+.jf-add-folder-placeholder {
+  display: none;
+  min-width: 220px;
+  height: 240px;
+  border: 2px dashed rgba(255, 43, 133, 0.45);
+  border-radius: 18px;
+  background: rgba(255, 43, 133, 0.05);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #FF70A6;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+body.jf-edit-active .jf-add-folder-placeholder {
+  display: flex !important;
+}
+
+.jf-add-folder-placeholder:hover {
+  background: rgba(255, 43, 133, 0.15);
+  border-color: #FF2B85;
+  color: #FFFFFF;
+  transform: translateY(-4px);
+}
+
+.jf-add-360-btn {
+  display: none;
+  padding: 8px 16px;
+  background: #FF2B85;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 20px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 43, 133, 0.4);
+  transition: all 0.25s ease;
+  margin: 12px auto;
+}
+
+body.jf-edit-active .jf-add-360-btn {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+}
+
+.jf-add-360-btn:hover {
+  background: #D10068;
+  transform: translateY(-2px);
+}
+
+/* Flipbook Editor Page Rows */
+.fbe-page-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fbe-page-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.fbe-page-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.fbe-page-input {
+  padding: 6px 10px;
+  font-size: 0.82rem;
+}
+
+.fbe-file-input {
+  font-size: 0.72rem;
+  padding: 2px 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.fbe-btn-del {
+  background: rgba(255, 75, 114, 0.2);
+  color: #FF4B72;
+  border: 1px solid rgba(255, 75, 114, 0.4);
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.fbe-btn-del:hover {
+  background: #FF4B72;
+  color: #FFFFFF;
+}
+

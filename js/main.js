@@ -682,54 +682,63 @@ function initPaletteChips() {
 /* ============================================================
    CAROUSEL 360 (3D RING SHOWCASE)
    ============================================================ */
+let c360Data = [
+  {
+    title: "NoteySTUFF Stationery Brand",
+    category: "BRANDING & PACKAGING",
+    desc: "0-to-1 brand identity, custom notebooks & packaging.",
+    img: "assets/portfolio_works/notey-cover.webp",
+    link: "https://www.behance.net/gallery/248952345/Notey-Stuff-Stationery-Brand-Case-Study?platform=direct"
+  },
+  {
+    title: "MyKitab.pk 12 Notebook Covers",
+    category: "PRODUCT & COVER DESIGN",
+    desc: "12 custom notebook collections & print layouts.",
+    img: "assets/portfolio_works/mykitab-cover-1.png",
+    link: "https://www.behance.net/gallery/254298367/MyKitabpk-Notebook-Collections-Designs"
+  },
+  {
+    title: "Takhleeq Karian Social System",
+    category: "SOCIAL MEDIA SYSTEM",
+    desc: "Visual guidelines & high-engagement content system.",
+    img: "assets/portfolio_works/takhleeq-1.png",
+    link: "https://www.behance.net/gallery/254336339/Takhleeq-Karian-Social-Media-Content-System"
+  },
+  {
+    title: "Fatima Jee's Fashion AI Promos",
+    category: "AI-ASSISTED VIDEO & FASHION",
+    desc: "Runway ML & Veo 3 AI fashion promo campaigns.",
+    img: "assets/portfolio_works/fatima-jees.png",
+    link: "https://www.behance.net/gallery/241524767/Fatima-Jees-Clothing-Brand"
+  },
+  {
+    title: "Future Of Tech — Elite IT Team",
+    category: "TECH CAROUSEL DESIGN",
+    desc: "Tech educational carousel for high saves & shares.",
+    img: "assets/portfolio_works/elite-tech-1.png",
+    link: "https://www.behance.net/gallery/220218641/Future-Of-Tech-Carasouel-Post-Design-For-Elite-IT-Team"
+  },
+  {
+    title: "NeuroStats Network Design System",
+    category: "DATA INFOGRAPHICS",
+    desc: "Dark-mode AI infographics & neural data design.",
+    img: "assets/portfolio_works/neurostats-1.png",
+    link: "https://www.behance.net/gallery/217808789/Carasouel-Post-Designs-For-NeuroStats-Network"
+  }
+];
+
+try {
+  const savedC360 = localStorage.getItem('jf_c360_data');
+  if (savedC360) c360Data = JSON.parse(savedC360);
+} catch (e) {
+  console.warn('Could not load saved 360 data:', e);
+}
+
+let update360RingRef = null;
+
 function initCarousel360() {
   const container = document.getElementById('c360Container');
   if (!container) return;
-
-  const c360Data = [
-    {
-      title: "NoteySTUFF Stationery Brand",
-      category: "BRANDING & PACKAGING",
-      desc: "0-to-1 brand identity, custom notebooks & packaging.",
-      img: "assets/portfolio_works/notey-cover.webp",
-      link: "https://www.behance.net/gallery/248952345/Notey-Stuff-Stationery-Brand-Case-Study?platform=direct"
-    },
-    {
-      title: "MyKitab.pk 12 Notebook Covers",
-      category: "PRODUCT & COVER DESIGN",
-      desc: "12 custom notebook collections & print layouts.",
-      img: "assets/portfolio_works/mykitab-cover-1.png",
-      link: "https://www.behance.net/gallery/254298367/MyKitabpk-Notebook-Collections-Designs"
-    },
-    {
-      title: "Takhleeq Karian Social System",
-      category: "SOCIAL MEDIA SYSTEM",
-      desc: "Visual guidelines & high-engagement content system.",
-      img: "assets/portfolio_works/takhleeq-1.png",
-      link: "https://www.behance.net/gallery/254336339/Takhleeq-Karian-Social-Media-Content-System"
-    },
-    {
-      title: "Fatima Jee's Fashion AI Promos",
-      category: "AI-ASSISTED VIDEO & FASHION",
-      desc: "Runway ML & Veo 3 AI fashion promo campaigns.",
-      img: "assets/portfolio_works/fatima-jees.png",
-      link: "https://www.behance.net/gallery/241524767/Fatima-Jees-Clothing-Brand"
-    },
-    {
-      title: "Future Of Tech — Elite IT Team",
-      category: "TECH CAROUSEL DESIGN",
-      desc: "Tech educational carousel for high saves & shares.",
-      img: "assets/portfolio_works/elite-tech-1.png",
-      link: "https://www.behance.net/gallery/220218641/Future-Of-Tech-Carasouel-Post-Design-For-Elite-IT-Team"
-    },
-    {
-      title: "NeuroStats Network Design System",
-      category: "DATA INFOGRAPHICS",
-      desc: "Dark-mode AI infographics & neural data design.",
-      img: "assets/portfolio_works/neurostats-1.png",
-      link: "https://www.behance.net/gallery/217808789/Carasouel-Post-Designs-For-NeuroStats-Network"
-    }
-  ];
 
   const numItems = c360Data.length;
   const angleStep = 360 / numItems;
@@ -737,6 +746,22 @@ function initCarousel360() {
   const ringTiltDeg = 38;
   let isPaused = false;
   let timer = null;
+
+  const totalCountEl = document.getElementById('c360TotalCount');
+  if (totalCountEl) totalCountEl.textContent = String(numItems).padStart(2, '0');
+
+  // Re-populate ring thumbs if needed
+  const ring = document.getElementById('c360Ring');
+  if (ring && ring.children.length !== numItems) {
+    ring.innerHTML = '';
+    c360Data.forEach((item, idx) => {
+      const wrap = document.createElement('div');
+      wrap.className = `c360-thumb-wrapper ${idx === 0 ? 'active-thumb' : ''}`;
+      wrap.setAttribute('data-c360-idx', idx);
+      wrap.innerHTML = `<div class="c360-thumb-item"><img src="${item.img}" alt="${item.title}" class="c360-thumb-img" loading="lazy"></div>`;
+      ring.appendChild(wrap);
+    });
+  }
 
   const thumbs = document.querySelectorAll('.c360-thumb-wrapper');
   const prevBtn = document.getElementById('c360Prev');
@@ -761,7 +786,7 @@ function initCarousel360() {
       t.classList.toggle('active-thumb', i === centerIdx);
     });
 
-    const item = c360Data[centerIdx];
+    const item = c360Data[centerIdx] || c360Data[0];
     const centerImg = document.getElementById('c360CenterImg');
     const centerBadge = document.getElementById('c360CenterBadge');
     const centerTitle = document.getElementById('c360CenterTitle');
@@ -769,19 +794,21 @@ function initCarousel360() {
     const centerBtn = document.getElementById('c360CenterBtn');
     const counter = document.getElementById('c360CurrentIdx');
 
-    if (centerImg && centerImg.getAttribute('src') !== item.img) {
+    if (centerImg && item && centerImg.getAttribute('src') !== item.img) {
       centerImg.style.opacity = '0.35';
       setTimeout(() => {
         centerImg.src = item.img;
         centerImg.style.opacity = '1';
       }, 150);
     }
-    if (centerBadge) centerBadge.textContent = item.category;
-    if (centerTitle) centerTitle.textContent = item.title;
-    if (centerDesc) centerDesc.textContent = item.desc;
-    if (centerBtn) centerBtn.href = item.link;
+    if (centerBadge && item) centerBadge.textContent = item.category;
+    if (centerTitle && item) centerTitle.textContent = item.title;
+    if (centerDesc && item) centerDesc.textContent = item.desc;
+    if (centerBtn && item) centerBtn.href = item.link;
     if (counter) counter.textContent = String(centerIdx + 1).padStart(2, '0');
   }
+
+  update360RingRef = updateRing;
 
   function rotateLeft() {
     currentRotation += angleStep;
@@ -793,12 +820,28 @@ function initCarousel360() {
     updateRing();
   }
 
-  if (prevBtn) prevBtn.addEventListener('click', () => { rotateLeft(); resetAutoplay(); });
-  if (nextBtn) nextBtn.addEventListener('click', () => { rotateRight(); resetAutoplay(); });
+  function startAutoplay() {
+    stopAutoplay();
+    timer = setInterval(() => {
+      if (!isPaused) rotateRight();
+    }, 4500);
+  }
+
+  function stopAutoplay() {
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+
+  function resetAutoplay() {
+    stopAutoplay();
+    startAutoplay();
+  }
+
+  if (prevBtn) prevBtn.onclick = () => { rotateLeft(); resetAutoplay(); };
+  if (nextBtn) nextBtn.onclick = () => { rotateRight(); resetAutoplay(); };
 
   thumbs.forEach((thumb, i) => {
     thumb.style.cursor = 'pointer';
-    thumb.addEventListener('click', () => {
+    thumb.onclick = () => {
       const steps = Math.round(currentRotation / angleStep);
       const currentIdx = ((-steps % numItems) + numItems) % numItems;
       let diff = i - currentIdx;
@@ -814,231 +857,123 @@ function initCarousel360() {
       currentRotation -= diff * angleStep;
       updateRing();
       resetAutoplay();
-    });
+    };
   });
-
-  const centerCard = document.getElementById('c360CenterCard');
-  if (centerCard) {
-    centerCard.style.cursor = 'pointer';
-    centerCard.addEventListener('click', (e) => {
-      if (!e.target.closest('#c360CenterBtn')) {
-        const steps = Math.round(currentRotation / angleStep);
-        const centerIdx = ((-steps % numItems) + numItems) % numItems;
-        const item = c360Data[centerIdx];
-        if (item && item.link) {
-          window.open(item.link, '_blank', 'noopener');
-        }
-      }
-    });
-  }
-
-  // Autoplay
-  function startAutoplay() {
-    stopAutoplay();
-    timer = setInterval(() => {
-      if (!isPaused) rotateRight();
-    }, 2400);
-  }
-  function stopAutoplay() {
-    if (timer) clearInterval(timer);
-  }
-  function resetAutoplay() {
-    startAutoplay();
-  }
 
   container.addEventListener('mouseenter', () => { isPaused = true; });
   container.addEventListener('mouseleave', () => { isPaused = false; });
   window.addEventListener('resize', () => updateRing(false));
-
-  // Mobile Touch Swipe support
-  let c360TouchStartX = 0;
-  let c360TouchEndX = 0;
-  container.addEventListener('touchstart', (e) => {
-    c360TouchStartX = e.changedTouches[0].screenX;
-    isPaused = true;
-  }, { passive: true });
-  container.addEventListener('touchend', (e) => {
-    c360TouchEndX = e.changedTouches[0].screenX;
-    const diffX = c360TouchEndX - c360TouchStartX;
-    if (Math.abs(diffX) > 35) {
-      if (diffX > 0) rotateLeft();
-      else rotateRight();
-    }
-    isPaused = false;
-    resetAutoplay();
-  }, { passive: true });
 
   updateRing();
   startAutoplay();
 }
 
 /* ============================================================
-   INTERACTIVE NOTEBOOK LOOKBOOK (FLIPBOOK)
+   INTERACTIVE NOTEBOOK LOOKBOOKS (DUAL CLEAN IMAGE FLIPBOOKS)
    ============================================================ */
+let noteyPagesData = [
+  'assets/portfolio_works/notey-cover.webp',
+  'assets/portfolio_works/notey-spread.webp',
+  'assets/portfolio_works/notey-mockup1.webp',
+  'assets/portfolio_works/notey-pkg1.webp',
+  'assets/portfolio_works/notey-real-cover.png',
+  'assets/portfolio_works/notey-real-spread.png'
+];
+
+let mykitabPagesData = [
+  'assets/portfolio_works/mykitab-cover-1.png',
+  'assets/portfolio_works/mykitab-cover-2.png',
+  'assets/portfolio_works/mykitab-cover-3.png',
+  'assets/portfolio_works/mykitab-cover-4.png',
+  'assets/portfolio_works/mykitab-cover-5.png',
+  'assets/portfolio_works/mykitab-cover-6.png',
+  'assets/portfolio_works/mykitab-cover-7.png',
+  'assets/portfolio_works/mykitab-cover-8.png',
+  'assets/portfolio_works/mykitab-cover-9.png',
+  'assets/portfolio_works/mykitab-cover-10.png'
+];
+
 function initNotebookFlipBook() {
-  const book = document.getElementById('book3D');
-  if (!book) return;
+  try {
+    const savedNotey = localStorage.getItem('jf_flipbook_notey');
+    if (savedNotey) noteyPagesData = JSON.parse(savedNotey);
+    const savedMykitab = localStorage.getItem('jf_flipbook_mykitab');
+    if (savedMykitab) mykitabPagesData = JSON.parse(savedMykitab);
+  } catch (e) {
+    console.warn('Could not load saved flipbook pages:', e);
+  }
 
-  const bookSpreads = [
-    {
-      leftBadge: "MYKITAB.PK · 2026",
-      leftPageNum: "Page 01",
-      leftTitle: "Kawaii Aesthetic Collection",
-      leftDesc: "6 Cute, pastel-toned cover designs created for young students and aesthetic planners in Pakistan.",
-      leftCovers: [
-        { img: "assets/portfolio_works/mykitab-cover-1.png", name: "Floral Aesthetic" },
-        { img: "assets/portfolio_works/mykitab-cover-2.png", name: "Pastel Dreams" }
-      ],
-      rightBadge: "HAND-DRAWN SERIES",
-      rightPageNum: "Page 02",
-      rightTitle: "Botanical & Abstract Line Art",
-      rightDesc: "Developed print-ready vectors, spine measurements, bleed margins, and barcode layouts for retail shelves.",
-      rightImg: "assets/portfolio_works/mykitab-cover-3.png",
-      rightTag: "12 Hand-drawn & Pastel Covers",
-      behanceLink: "https://www.behance.net/gallery/254298367/MyKitabpk-Notebook-Collections-Designs"
-    },
-    {
-      leftBadge: "NOTEYSTUFF · 0-TO-1",
-      leftPageNum: "Page 03",
-      leftTitle: "Noteystuff Stationery Identity",
-      leftDesc: "Complete brand development from zero: color systems, character stickers, washi tapes, and branded boxes.",
-      leftCovers: [
-        { img: "assets/portfolio_works/notey-cover.webp", name: "Notebook Line" },
-        { img: "assets/portfolio_works/notey-spread.webp", name: "Product Suite" }
-      ],
-      rightBadge: "PACKAGING SPECS",
-      rightPageNum: "Page 04",
-      rightTitle: "Die-Lines & Retail Packaging",
-      rightDesc: "Custom die-lines, foil stamping coordinates, and protective shrink-wrap sleeve artworks for high volume manufacturing.",
-      rightImg: "assets/portfolio_works/notey-mockup1.webp",
-      rightTag: "Die-Cut Stationery Suite",
-      behanceLink: "https://www.behance.net/gallery/248952345/Notey-Stuff-Stationery-Brand-Case-Study?platform=direct"
-    },
-    {
-      leftBadge: "PORTFOLIO ARCHIVE",
-      leftPageNum: "Page 05",
-      leftTitle: "12 Custom Covers Produced",
-      leftDesc: "Designed exclusively for e-commerce launch, generating +75% organic customer reach & distributor inquiries.",
-      leftCovers: [
-        { img: "assets/portfolio_works/mykitab-cover-4.png", name: "Botanical Bloom" },
-        { img: "assets/portfolio_works/mykitab-cover-5.png", name: "Abstract Line Art" }
-      ],
-      rightBadge: "BEHANCE VERIFIED",
-      rightPageNum: "Page 06",
-      rightTitle: "Explore Full Digital Spread",
-      rightDesc: "Explore high-resolution case study slides, print mockups, and customer feedback on Behance.",
-      rightImg: "assets/portfolio_works/mykitab-cover-6.png",
-      rightTag: "Complete Behance Case Study",
-      behanceLink: "https://www.behance.net/gallery/254298367/MyKitabpk-Notebook-Collections-Designs"
+  setupSingleFlipbook('notey', noteyPagesData);
+  setupSingleFlipbook('mykitab', mykitabPagesData);
+}
+
+function setupSingleFlipbook(idPrefix, pagesArray) {
+  let idx = 0;
+  const imgEl = document.getElementById(`${idPrefix}ActiveImg`);
+  const pageNumEl = document.getElementById(`${idPrefix}PageNum`);
+  const totalEl = document.getElementById(`${idPrefix}TotalPages`);
+  const prevBtn = document.getElementById(`${idPrefix}PrevBtn`);
+  const nextBtn = document.getElementById(`${idPrefix}NextBtn`);
+  const dotsEl = document.getElementById(`${idPrefix}Dots`);
+  const spreadEl = document.getElementById(`${idPrefix}SpreadEl`);
+
+  if (!imgEl || !pagesArray || pagesArray.length === 0) return;
+
+  function renderDots() {
+    if (!dotsEl) return;
+    dotsEl.innerHTML = '';
+    const maxDots = Math.min(pagesArray.length, 8);
+    for (let i = 0; i < maxDots; i++) {
+      const dot = document.createElement('span');
+      dot.className = `flip-dot ${i === idx ? 'active' : ''}`;
+      dot.addEventListener('click', () => goToPage(i));
+      dotsEl.appendChild(dot);
     }
-  ];
+  }
 
-  let currentSpread = 0;
-  const prevBtn = document.getElementById('bookPrevBtn');
-  const nextBtn = document.getElementById('bookNextBtn');
-  const dots = document.querySelectorAll('.bpi-dot');
-  const rightPage = document.getElementById('bookPageRight');
+  function goToPage(targetIdx, direction = 'next') {
+    if (targetIdx < 0) targetIdx = pagesArray.length - 1;
+    if (targetIdx >= pagesArray.length) targetIdx = 0;
+    idx = targetIdx;
 
-  function renderSpread(idx) {
-    const s = bookSpreads[idx];
-    if (!s) return;
-
-    if (rightPage) {
-      rightPage.style.transform = 'rotateY(-25deg)';
-      rightPage.style.opacity = '0.7';
+    if (spreadEl) {
+      spreadEl.style.transform = direction === 'next' ? 'rotateY(-25deg)' : 'rotateY(25deg)';
+      spreadEl.style.opacity = '0.4';
     }
 
     setTimeout(() => {
-      const leftBadge = document.querySelector('#bookPageLeft .book-meta-badge');
-      const leftNum = document.getElementById('bookLeftPageNum');
-      const leftTitle = document.querySelector('#bookPageLeft .book-spread-title');
-      const leftDesc = document.querySelector('#bookPageLeft .book-spread-desc');
-      const leftImgs = document.querySelectorAll('#bookPageLeft .bc-img');
-      const leftNames = document.querySelectorAll('#bookPageLeft .book-cover-mini span');
+      imgEl.src = pagesArray[idx];
+      imgEl.setAttribute('data-lightbox', pagesArray[idx]);
+      if (pageNumEl) pageNumEl.textContent = `Page ${idx + 1}`;
+      if (totalEl) totalEl.textContent = pagesArray.length;
+      renderDots();
 
-      if (leftBadge) leftBadge.textContent = s.leftBadge;
-      if (leftNum) leftNum.textContent = s.leftPageNum;
-      if (leftTitle) leftTitle.textContent = s.leftTitle;
-      if (leftDesc) leftDesc.textContent = s.leftDesc;
-      if (leftImgs[0] && s.leftCovers[0]) leftImgs[0].src = s.leftCovers[0].img;
-      if (leftNames[0] && s.leftCovers[0]) leftNames[0].textContent = s.leftCovers[0].name;
-      if (leftImgs[1] && s.leftCovers[1]) leftImgs[1].src = s.leftCovers[1].img;
-      if (leftNames[1] && s.leftCovers[1]) leftNames[1].textContent = s.leftCovers[1].name;
-
-      const rightBadge = document.querySelector('#bookPageRight .book-meta-badge');
-      const rightNum = document.getElementById('bookRightPageNum');
-      const rightTitle = document.getElementById('bookRightTitle');
-      const rightDesc = document.getElementById('bookRightDesc');
-      const rightImg = document.getElementById('bookRightImg');
-      const rightTag = document.querySelector('#bookPageRight .book-art-tag');
-      const ctaBtn = document.querySelector('.btn-book-behance');
-
-      if (rightBadge) rightBadge.textContent = s.rightBadge;
-      if (rightNum) rightNum.textContent = s.rightPageNum;
-      if (rightTitle) rightTitle.textContent = s.rightTitle;
-      if (rightDesc) rightDesc.textContent = s.rightDesc;
-      if (rightImg) rightImg.src = s.rightImg;
-      if (rightTag) rightTag.textContent = s.rightTag;
-      if (ctaBtn) ctaBtn.href = s.behanceLink;
-
-      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-
-      if (rightPage) {
-        rightPage.style.transform = 'rotateY(0deg)';
-        rightPage.style.opacity = '1';
+      if (spreadEl) {
+        spreadEl.style.transform = 'rotateY(0deg)';
+        spreadEl.style.opacity = '1';
       }
     }, 180);
   }
 
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      currentSpread = (currentSpread - 1 + bookSpreads.length) % bookSpreads.length;
-      renderSpread(currentSpread);
-    });
-  }
+    if (prevBtn) prevBtn.addEventListener('click', () => goToPage(idx - 1, 'prev'));
+    if (nextBtn) nextBtn.addEventListener('click', () => goToPage(idx + 1, 'next'));
 
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      currentSpread = (currentSpread + 1) % bookSpreads.length;
-      renderSpread(currentSpread);
-    });
-  }
-
-  dots.forEach((dot, idx) => {
-    dot.addEventListener('click', () => {
-      currentSpread = idx;
-      renderSpread(currentSpread);
-    });
-  });
-
-  if (rightPage) {
-    rightPage.addEventListener('click', (e) => {
-      if (!e.target.closest('a')) {
-        currentSpread = (currentSpread + 1) % bookSpreads.length;
-        renderSpread(currentSpread);
-      }
-    });
-  }
-
-  // Mobile Touch Swipe for Lookbook Flipbook
-  let bookTouchStartX = 0;
-  let bookTouchEndX = 0;
-  book.addEventListener('touchstart', (e) => {
-    bookTouchStartX = e.changedTouches[0].screenX;
-  }, { passive: true });
-  book.addEventListener('touchend', (e) => {
-    bookTouchEndX = e.changedTouches[0].screenX;
-    const diffX = bookTouchEndX - bookTouchStartX;
-    if (Math.abs(diffX) > 40) {
-      if (diffX < 0) {
-        currentSpread = (currentSpread + 1) % bookSpreads.length;
-        renderSpread(currentSpread);
-      } else {
-        currentSpread = (currentSpread - 1 + bookSpreads.length) % bookSpreads.length;
-        renderSpread(currentSpread);
-      }
+    // Touch Swipe for Flipbook
+    if (spreadEl) {
+      let touchStartX = 0;
+      spreadEl.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      spreadEl.addEventListener('touchend', (e) => {
+        const diffX = e.changedTouches[0].screenX - touchStartX;
+        if (Math.abs(diffX) > 40) {
+          if (diffX < 0) goToPage(idx + 1, 'next');
+          else goToPage(idx - 1, 'prev');
+        }
+      }, { passive: true });
     }
-  }, { passive: true });
+
+    renderDots();
 }
 
 /* ============================================================
@@ -1601,18 +1536,22 @@ function initPortfolioStudio() {
 
     // Enable inline editing for ALL headings, paragraphs, descriptions, badges across entire website
     const allTextTargets = document.querySelectorAll(
-      'h1, h2, h3, h4, h5, p, .cat-badge, .cat-sub, .folder-name, .bento-tag, .bento-title, .stat-num, .stat-label, .mt-tag-brand, .mt-stat-pill'
+      'h1, h2, h3, h4, h5, p, .cat-badge, .cat-sub, .folder-name, .bento-tag, .bento-title, .stat-num, .stat-label, .mt-tag-brand, .mt-stat-pill, .act-role, .act-desc, .act-chip, .act-duration, .act-work-type, .act-company, .exp-badge-now, .exp-badge-award, .act-img-caption, .case-title, .case-sub'
     );
     allTextTargets.forEach((el, idx) => {
-      if (el.closest('#jfStudioFab') || el.closest('.jf-modal-backdrop')) return;
+      if (el.closest('#jfStudioFab') || el.closest('.jf-modal-backdrop') || el.closest('.jf-section-reorder-bar')) return;
       el.setAttribute('contenteditable', 'true');
       el.setAttribute('data-jf-editable', 'true');
       if (!el.getAttribute('data-jf-id')) el.setAttribute('data-jf-id', `jf-txt-${idx}`);
       el.addEventListener('blur', saveTextEdits);
     });
 
-    // Ensure all cards have edit overlays
+    // Ensure all cards and media have edit overlays
     attachCardEditOverlays();
+    attachFolderPlaceholders();
+    attachC360Button();
+    attachSectionReorderBars();
+    initPaletteEditor();
   }
 
   function disableStudioMode() {
@@ -1626,8 +1565,106 @@ function initPortfolioStudio() {
 
   if (btnLock) btnLock.addEventListener('click', disableStudioMode);
 
+  // Section Reordering Toolbar
+  function attachSectionReorderBars() {
+    const sections = document.querySelectorAll('section[id]');
+    sections.forEach((sec) => {
+      if (sec.querySelector('.jf-section-reorder-bar')) return;
+      const bar = document.createElement('div');
+      bar.className = 'jf-section-reorder-bar';
+      const secName = (sec.getAttribute('id') || 'section').toUpperCase();
+      bar.innerHTML = `
+        <span class="jf-section-label">SECTION: ${secName}</span>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="jf-reorder-btn jf-reorder-up" title="Move Section Up">▲ Move Up</button>
+          <button type="button" class="jf-reorder-btn jf-reorder-down" title="Move Section Down">▼ Move Down</button>
+        </div>
+      `;
+      const upBtn = bar.querySelector('.jf-reorder-up');
+      const downBtn = bar.querySelector('.jf-reorder-down');
+
+      upBtn.onclick = (e) => {
+        e.stopPropagation();
+        let prev = sec.previousElementSibling;
+        while (prev && prev.tagName !== 'SECTION') {
+          prev = prev.previousElementSibling;
+        }
+        if (prev && prev.tagName === 'SECTION') {
+          sec.parentElement.insertBefore(sec, prev);
+          saveSectionOrder();
+        }
+      };
+
+      downBtn.onclick = (e) => {
+        e.stopPropagation();
+        let next = sec.nextElementSibling;
+        while (next && next.tagName !== 'SECTION') {
+          next = next.nextElementSibling;
+        }
+        if (next && next.tagName === 'SECTION') {
+          sec.parentElement.insertBefore(next, sec);
+          saveSectionOrder();
+        }
+      };
+
+      sec.insertBefore(bar, sec.firstChild);
+    });
+  }
+
+  function saveSectionOrder() {
+    const order = Array.from(document.querySelectorAll('section[id]')).map(s => s.id);
+    localStorage.setItem('jf_section_order', JSON.stringify(order));
+  }
+
+  function restoreSectionOrder() {
+    try {
+      const saved = localStorage.getItem('jf_section_order');
+      if (!saved) return;
+      const order = JSON.parse(saved);
+      const parent = document.body;
+      const footer = document.querySelector('footer');
+      order.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.parentElement === parent) {
+          if (footer) parent.insertBefore(el, footer);
+          else parent.appendChild(el);
+        }
+      });
+    } catch (e) {
+      console.warn('Could not restore section order:', e);
+    }
+  }
+
+  // Interactive Color Palette Theme Editor
+  function initPaletteEditor() {
+    const chips = document.querySelectorAll('.palette-chips .p-chip');
+    if (!chips.length) return;
+
+    chips.forEach((chip, idx) => {
+      chip.style.cursor = 'pointer';
+      chip.onclick = () => {
+        if (!document.body.classList.contains('jf-edit-active')) return;
+        const currentColor = chip.style.getPropertyValue('--c') || chip.getAttribute('title') || '#E8006A';
+        const newColor = prompt(`Enter new hex color for Brand Palette Chip ${idx + 1}:`, currentColor.trim());
+        if (newColor && /^#([0-9A-F]{3}){1,2}$/i.test(newColor.trim())) {
+          const hex = newColor.trim().toUpperCase();
+          chip.style.setProperty('--c', hex);
+          chip.setAttribute('title', hex);
+
+          const floatDots = document.querySelectorAll('#caseFloatPalette div');
+          if (floatDots[idx]) {
+            floatDots[idx].style.background = hex;
+          }
+
+          const paletteArr = Array.from(chips).map(c => c.style.getPropertyValue('--c') || c.getAttribute('title'));
+          localStorage.setItem('jf_palette_colors', JSON.stringify(paletteArr));
+        }
+      };
+    });
+  }
+
   function attachCardEditOverlays() {
-    const cardSelectors = '.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card';
+    const cardSelectors = '.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card, .act-img-box, .case-img-wrap, .id-card-frame, .holo-profile-card';
     document.querySelectorAll(cardSelectors).forEach(card => {
       if (!card.querySelector('.jf-card-edit-overlay')) {
         const ov = document.createElement('div');
@@ -1636,6 +1673,50 @@ function initPortfolioStudio() {
         card.appendChild(ov);
       }
     });
+
+    // Attach folder edit overlays
+    document.querySelectorAll('.folder-unit').forEach(folder => {
+      if (!folder.querySelector('.jf-card-edit-overlay')) {
+        const ov = document.createElement('div');
+        ov.className = 'jf-card-edit-overlay';
+        ov.innerHTML = '<button type="button" class="jf-btn-card-edit" onclick="openFolderEditor(this)">✎ Edit Folder</button>';
+        folder.appendChild(ov);
+      }
+    });
+
+    // Attach 360 center card edit overlay
+    const c360Center = document.getElementById('c360CenterCard');
+    if (c360Center && !c360Center.querySelector('.jf-card-edit-overlay')) {
+      const ov = document.createElement('div');
+      ov.className = 'jf-card-edit-overlay';
+      ov.innerHTML = '<button type="button" class="jf-btn-card-edit" onclick="openC360Editor()">✎ Edit Active 360</button>';
+      c360Center.appendChild(ov);
+    }
+  }
+
+  function attachFolderPlaceholders() {
+    document.querySelectorAll('.cat-folders-row').forEach(row => {
+      if (!row.querySelector('.jf-add-folder-placeholder')) {
+        const ph = document.createElement('div');
+        ph.className = 'jf-add-folder-placeholder';
+        ph.onclick = function() { openNewFolderDialog(this); };
+        ph.innerHTML = '<span style="font-size:1.8rem; line-height:1;">+</span><span>Add New Folder</span>';
+        row.appendChild(ph);
+      }
+    });
+  }
+
+  function attachC360Button() {
+    const container = document.getElementById('c360Container');
+    if (container && !document.getElementById('btnC360AddProject')) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.id = 'btnC360AddProject';
+      btn.className = 'jf-add-360-btn';
+      btn.innerHTML = '<span>+ Add 360 Spotlight Project</span>';
+      btn.onclick = () => openNew360Dialog();
+      container.parentNode.insertBefore(btn, container.nextSibling);
+    }
   }
 
   function saveTextEdits() {
@@ -1649,10 +1730,12 @@ function initPortfolioStudio() {
 
   function restoreSavedEdits() {
     try {
+      restoreSectionOrder();
+
       const savedText = localStorage.getItem('jf_text_edits');
       if (savedText) {
         const data = JSON.parse(savedText);
-        document.querySelectorAll('h1, h2, h3, h4, h5, p, .cat-badge, .cat-sub, .folder-name, .bento-tag, .bento-title, .stat-num, .stat-label, .mt-tag-brand, .mt-stat-pill').forEach((el, idx) => {
+        document.querySelectorAll('h1, h2, h3, h4, h5, p, .cat-badge, .cat-sub, .folder-name, .bento-tag, .bento-title, .stat-num, .stat-label, .mt-tag-brand, .mt-stat-pill, .act-role, .act-desc, .act-chip, .act-duration, .act-work-type, .act-company').forEach((el, idx) => {
           if (el.closest('#jfStudioFab') || el.closest('.jf-modal-backdrop')) return;
           const id = el.getAttribute('data-jf-id') || `jf-txt-${idx}`;
           el.setAttribute('data-jf-id', id);
@@ -1669,6 +1752,65 @@ function initPortfolioStudio() {
         });
       }
 
+      // Restore Folder Edits
+      const savedFolders = localStorage.getItem('jf_folder_edits');
+      if (savedFolders) {
+        const foldersData = JSON.parse(savedFolders);
+        Object.keys(foldersData).forEach(fid => {
+          const folderEl = document.querySelector(`[data-folder-id="${fid}"]`);
+          const data = foldersData[fid];
+          if (folderEl && data) {
+            const fName = folderEl.querySelector('.folder-name');
+            const fCat = folderEl.querySelector('.folder-cat');
+            const fTab = folderEl.querySelector('.folder-tab');
+            const fBack = folderEl.querySelector('.folder-back');
+            const fFront = folderEl.querySelector('.folder-front');
+            const h4 = folderEl.querySelector('.folder-caption-info h4');
+            const p = folderEl.querySelector('.folder-caption-info p');
+            const fp1Img = folderEl.querySelector('.fp-1 img');
+            const fp1Title = folderEl.querySelector('.fp-1 .fp-title');
+            const fp2Img = folderEl.querySelector('.fp-2 img');
+            const fp2Title = folderEl.querySelector('.fp-2 .fp-title');
+            const fp3Img = folderEl.querySelector('.fp-3 img');
+            const fp3Title = folderEl.querySelector('.fp-3 .fp-title');
+
+            if (fName && data.name) fName.textContent = data.name;
+            if (fCat && data.cat) fCat.textContent = data.cat;
+            if (data.color) {
+              if (fTab) fTab.style.background = data.color;
+              if (fBack) fBack.style.background = data.color;
+              if (fFront) { fFront.style.background = data.color; fFront.style.filter = 'brightness(0.85)'; }
+            }
+            if (h4 && data.title) h4.textContent = data.title;
+            if (p && data.desc) p.textContent = data.desc;
+            if (data.behance) folderEl.setAttribute('data-behance', data.behance);
+            if (fp1Img && data.img1) fp1Img.src = data.img1;
+            if (fp1Title && data.img1Label) fp1Title.textContent = data.img1Label;
+            if (fp2Img && data.img2) fp2Img.src = data.img2;
+            if (fp2Title && data.img2Label) fp2Title.textContent = data.img2Label;
+            if (fp3Img && data.img3) fp3Img.src = data.img3;
+            if (fp3Title && data.img3Label) fp3Title.textContent = data.img3Label;
+          }
+        });
+      }
+
+      // Restore Brand Palette
+      const savedPalette = localStorage.getItem('jf_palette_colors');
+      if (savedPalette) {
+        const pal = JSON.parse(savedPalette);
+        const chips = document.querySelectorAll('.palette-chips .p-chip');
+        const floatDots = document.querySelectorAll('#caseFloatPalette div');
+        pal.forEach((hex, i) => {
+          if (chips[i]) {
+            chips[i].style.setProperty('--c', hex);
+            chips[i].setAttribute('title', hex);
+          }
+          if (floatDots[i]) {
+            floatDots[i].style.background = hex;
+          }
+        });
+      }
+
       // Restore custom dynamically created galleries
       const savedGalleries = localStorage.getItem('jf_custom_galleries');
       if (savedGalleries) {
@@ -1680,9 +1822,9 @@ function initPortfolioStudio() {
     }
   }
 
-  // Open Card Editor (Supports both images and videos!)
+  // Open Card Editor (Supports images, videos, avatars, and timeline cards)
   window.openCardEditor = function(btn) {
-    activeEditCard = btn.closest('.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card');
+    activeEditCard = btn.closest('.bento-cell, .mt-card, .cat-img-card, .video-card-3d, .phone-mockup-3d, .laptop-mockup-3d, .gallery-stack-card, .act-img-box, .case-img-wrap, .id-card-frame, .holo-profile-card');
     if (!activeEditCard) return;
 
     if (!activeEditCard.getAttribute('data-card-id')) {
@@ -1703,16 +1845,16 @@ function initPortfolioStudio() {
       ceMediaType.dispatchEvent(new Event('change'));
     }
 
-    const imgEl = activeEditCard.querySelector('img');
+    const imgEl = activeEditCard.querySelector('img') || (activeEditCard.id === 'holoProfileCard' ? document.getElementById('holoAvatarImg') : null);
     const videoEl = activeEditCard.querySelector('video');
-    const titleEl = activeEditCard.querySelector('.bento-title, h3, h4, .video-card-title');
-    const descEl = activeEditCard.querySelector('p, .video-card-desc');
+    const titleEl = activeEditCard.querySelector('.bento-title, h3, h4, .video-card-title, .holo-card-name, .id-card-title, .act-img-caption');
+    const descEl = activeEditCard.querySelector('p, .video-card-desc, .holo-card-tag');
     const behanceLink = activeEditCard.getAttribute('data-behance') || (activeEditCard.tagName === 'A' ? activeEditCard.href : '');
 
     if (ceTitle) ceTitle.value = titleEl ? titleEl.textContent.trim() : '';
     if (ceDesc) ceDesc.value = descEl ? descEl.textContent.trim() : '';
 
-    if (ceImageUrl) ceImageUrl.value = imgEl ? imgEl.getAttribute('src') : '';
+    if (ceImageUrl) ceImageUrl.value = imgEl ? (imgEl.getAttribute('src') || '') : '';
     if (ceImageFile) ceImageFile.value = '';
 
     const videoSrc = activeEditCard.getAttribute('data-video') || (videoEl ? (videoEl.getAttribute('src') || (videoEl.querySelector('source') ? videoEl.querySelector('source').getAttribute('src') : '')) : '');
@@ -1783,11 +1925,15 @@ function initPortfolioStudio() {
 
   function applyCardData(card, data) {
     const isVideo = data.mediaType === 'video' || (data.videoUrl && data.videoUrl.length > 0);
-    const titleEl = card.querySelector('.bento-title, h3, h4, .video-card-title');
-    const descEl = card.querySelector('p, .video-card-desc');
+    const titleEl = card.querySelector('.bento-title, h3, h4, .video-card-title, .holo-card-name, .id-card-title');
+    const descEl = card.querySelector('p, .video-card-desc, .holo-card-tag');
 
     if (titleEl && data.title) titleEl.textContent = data.title;
     if (descEl && data.desc) descEl.textContent = data.desc;
+
+    // Aceternity Timeline caption
+    const actCaption = card.querySelector('.act-img-caption');
+    if (actCaption && data.title) actCaption.textContent = data.title;
 
     if (data.behance) {
       card.setAttribute('data-behance', data.behance);
@@ -1811,9 +1957,13 @@ function initPortfolioStudio() {
       const imgEl = card.querySelector('img');
       if (imgEl && data.videoPoster) imgEl.src = data.videoPoster;
     } else {
-      const imgEl = card.querySelector('img');
+      const imgEl = card.querySelector('img') || (card.id === 'holoProfileCard' ? document.getElementById('holoAvatarImg') : null);
       if (imgEl && data.img) imgEl.src = data.img;
       if (imgEl && data.focal) imgEl.style.objectPosition = data.focal;
+    }
+
+    if (data.img) {
+      card.setAttribute('data-lightbox', data.img);
     }
   }
 
@@ -2027,6 +2177,453 @@ function initPortfolioStudio() {
     });
   }
 
+  // ==========================================
+  // FOLDER EDITOR MODAL HANDLERS
+  // ==========================================
+  const folderModal = document.getElementById('jfFolderEditorModal');
+  const folderForm = document.getElementById('jfFolderEditorForm');
+  const btnFolderClose = document.getElementById('btnFolderEditorClose');
+  const btnFolderCancel = document.getElementById('btnFolderCancel');
+  const btnFolderDelete = document.getElementById('btnFolderDelete');
+  const feFolderId = document.getElementById('feFolderId');
+  const feFolderName = document.getElementById('feFolderName');
+  const feFolderCat = document.getElementById('feFolderCat');
+  const feFolderColor = document.getElementById('feFolderColor');
+  const feFolderColorHex = document.getElementById('feFolderColorHex');
+  const feBehanceLink = document.getElementById('feBehanceLink');
+  const feTitle = document.getElementById('feTitle');
+  const feDesc = document.getElementById('feDesc');
+  const feImg1 = document.getElementById('feImg1');
+  const feImg1File = document.getElementById('feImg1File');
+  const feImg1Label = document.getElementById('feImg1Label');
+  const feImg2 = document.getElementById('feImg2');
+  const feImg2File = document.getElementById('feImg2File');
+  const feImg2Label = document.getElementById('feImg2Label');
+  const feImg3 = document.getElementById('feImg3');
+  const feImg3File = document.getElementById('feImg3File');
+  const feImg3Label = document.getElementById('feImg3Label');
+
+  let activeEditFolder = null;
+  let activeAddFolderRow = null;
+
+  if (feFolderColor && feFolderColorHex) {
+    feFolderColor.addEventListener('input', () => { feFolderColorHex.value = feFolderColor.value; });
+    feFolderColorHex.addEventListener('input', () => { feFolderColor.value = feFolderColorHex.value; });
+  }
+
+  function closeFolderModal() {
+    if (folderModal) folderModal.style.display = 'none';
+    activeEditFolder = null;
+    activeAddFolderRow = null;
+  }
+
+  if (btnFolderClose) btnFolderClose.onclick = closeFolderModal;
+  if (btnFolderCancel) btnFolderCancel.onclick = closeFolderModal;
+
+  window.openFolderEditor = function(btn) {
+    activeEditFolder = btn.closest('.folder-unit');
+    if (!activeEditFolder) return;
+    activeAddFolderRow = null;
+
+    if (!activeEditFolder.getAttribute('data-folder-id')) {
+      activeEditFolder.setAttribute('data-folder-id', `folder-${Date.now()}`);
+    }
+
+    const folderId = activeEditFolder.getAttribute('data-folder-id');
+    const folderName = activeEditFolder.querySelector('.folder-name');
+    const folderCat = activeEditFolder.querySelector('.folder-cat');
+    const folderTab = activeEditFolder.querySelector('.folder-tab');
+    const behance = activeEditFolder.getAttribute('data-behance') || '';
+    const h4 = activeEditFolder.querySelector('.folder-caption-info h4');
+    const p = activeEditFolder.querySelector('.folder-caption-info p');
+
+    const fp1Img = activeEditFolder.querySelector('.fp-1 img');
+    const fp1Title = activeEditFolder.querySelector('.fp-1 .fp-title');
+    const fp2Img = activeEditFolder.querySelector('.fp-2 img');
+    const fp2Title = activeEditFolder.querySelector('.fp-2 .fp-title');
+    const fp3Img = activeEditFolder.querySelector('.fp-3 img');
+    const fp3Title = activeEditFolder.querySelector('.fp-3 .fp-title');
+
+    if (feFolderId) feFolderId.value = folderId;
+    if (feFolderName) feFolderName.value = folderName ? folderName.textContent.trim() : '';
+    if (feFolderCat) feFolderCat.value = folderCat ? folderCat.textContent.trim() : '';
+
+    const color = folderTab ? (folderTab.style.backgroundColor || folderTab.style.background || '#E8006A') : '#E8006A';
+    if (feFolderColor) feFolderColor.value = color.startsWith('#') ? color : '#E8006A';
+    if (feFolderColorHex) feFolderColorHex.value = feFolderColor ? feFolderColor.value : '#E8006A';
+
+    if (feBehanceLink) feBehanceLink.value = behance;
+    if (feTitle) feTitle.value = h4 ? h4.textContent.trim() : '';
+    if (feDesc) feDesc.value = p ? p.textContent.trim() : '';
+
+    if (feImg1) feImg1.value = fp1Img ? fp1Img.getAttribute('src') : '';
+    if (feImg1Label) feImg1Label.value = fp1Title ? fp1Title.textContent.trim() : '';
+    if (feImg2) feImg2.value = fp2Img ? fp2Img.getAttribute('src') : '';
+    if (feImg2Label) feImg2Label.value = fp2Title ? fp2Title.textContent.trim() : '';
+    if (feImg3) feImg3.value = fp3Img ? fp3Img.getAttribute('src') : '';
+    if (feImg3Label) feImg3Label.value = fp3Title ? fp3Title.textContent.trim() : '';
+
+    const heading = document.getElementById('feModalHeading');
+    if (heading) heading.textContent = 'Edit Project Folder';
+    if (btnFolderDelete) btnFolderDelete.style.display = 'inline-block';
+
+    if (folderModal) folderModal.style.display = 'flex';
+  };
+
+  window.openNewFolderDialog = function(placeholder) {
+    activeAddFolderRow = placeholder.closest('.cat-folders-row');
+    activeEditFolder = null;
+
+    if (folderForm) folderForm.reset();
+    if (feFolderId) feFolderId.value = `folder-${Date.now()}`;
+    if (feFolderColor) feFolderColor.value = '#E8006A';
+    if (feFolderColorHex) feFolderColorHex.value = '#E8006A';
+
+    const heading = document.getElementById('feModalHeading');
+    if (heading) heading.textContent = 'Add New Project Folder';
+    if (btnFolderDelete) btnFolderDelete.style.display = 'none';
+
+    if (folderModal) folderModal.style.display = 'flex';
+  };
+
+  if (btnFolderDelete) {
+    btnFolderDelete.onclick = () => {
+      if (activeEditFolder && confirm('Are you sure you want to delete this folder?')) {
+        const id = activeEditFolder.getAttribute('data-folder-id');
+        activeEditFolder.remove();
+        if (id) {
+          const saved = JSON.parse(localStorage.getItem('jf_folder_edits') || '{}');
+          delete saved[id];
+          localStorage.setItem('jf_folder_edits', JSON.stringify(saved));
+        }
+        closeFolderModal();
+      }
+    };
+  }
+
+  if (folderForm) {
+    folderForm.onsubmit = async (e) => {
+      e.preventDefault();
+
+      const readFile = (fileInput) => new Promise((resolve) => {
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (re) => resolve(re.target.result);
+          reader.readAsDataURL(fileInput.files[0]);
+        } else {
+          resolve(null);
+        }
+      });
+
+      const [f1, f2, f3] = await Promise.all([
+        readFile(feImg1File),
+        readFile(feImg2File),
+        readFile(feImg3File)
+      ]);
+
+      const img1Src = f1 || (feImg1 ? feImg1.value.trim() : '') || 'assets/portfolio_works/notey-cover.webp';
+      const img2Src = f2 || (feImg2 ? feImg2.value.trim() : '') || 'assets/portfolio_works/notey-mockup1.webp';
+      const img3Src = f3 || (feImg3 ? feImg3.value.trim() : '') || 'assets/portfolio_works/notey-pkg1.webp';
+
+      const folderData = {
+        name: feFolderName ? feFolderName.value.trim() : 'Project Folder',
+        cat: feFolderCat ? feFolderCat.value.trim() : 'Brand Identity · 2026',
+        color: feFolderColor ? feFolderColor.value : '#E8006A',
+        behance: feBehanceLink ? feBehanceLink.value.trim() : '',
+        title: feTitle ? feTitle.value.trim() : 'Project Showcase Folder',
+        desc: feDesc ? feDesc.value.trim() : 'Custom visual system & presentation assets.',
+        img1: img1Src,
+        img1Label: feImg1Label ? feImg1Label.value.trim() : 'Preview 1',
+        img2: img2Src,
+        img2Label: feImg2Label ? feImg2Label.value.trim() : 'Preview 2',
+        img3: img3Src,
+        img3Label: feImg3Label ? feImg3Label.value.trim() : 'Preview 3'
+      };
+
+      const folderId = feFolderId.value || `folder-${Date.now()}`;
+
+      function renderFolderHTML(el, data) {
+        el.setAttribute('data-folder-id', folderId);
+        if (data.behance) el.setAttribute('data-behance', data.behance);
+        el.setAttribute('data-lightbox', data.img1);
+        el.setAttribute('data-title', data.title);
+
+        el.innerHTML = `
+          <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openFolderEditor(this)">✎ Edit Folder</button></div>
+          <div class="folder-root">
+            <div class="folder-tab" style="background:${data.color}"></div>
+            <div class="folder-back" style="background:${data.color}"></div>
+            <div class="folder-papers">
+              <div class="folder-paper fp-1"><img src="${data.img1}" alt="${data.img1Label}" class="fp-img"><span class="fp-title">${data.img1Label}</span></div>
+              <div class="folder-paper fp-2"><img src="${data.img2}" alt="${data.img2Label}" class="fp-img"><span class="fp-title">${data.img2Label}</span></div>
+              <div class="folder-paper fp-3"><img src="${data.img3}" alt="${data.img3Label}" class="fp-img"><span class="fp-title">${data.img3Label}</span></div>
+            </div>
+            <div class="folder-front" style="background:${data.color}; filter:brightness(0.85);">
+              <div class="folder-label"><span class="folder-name">${data.name}</span><span class="folder-cat">${data.cat}</span></div>
+              <span class="folder-hint">Open ↗</span>
+            </div>
+          </div>
+          <div class="folder-caption-info">
+            <h4>${data.title}</h4>
+            <p>${data.desc}</p>
+          </div>
+        `;
+      }
+
+      if (activeEditFolder) {
+        renderFolderHTML(activeEditFolder, folderData);
+      } else if (activeAddFolderRow) {
+        const newFolder = document.createElement('div');
+        newFolder.className = 'folder-unit';
+        newFolder.tabIndex = 0;
+        renderFolderHTML(newFolder, folderData);
+        const placeholder = activeAddFolderRow.querySelector('.jf-add-folder-placeholder');
+        if (placeholder) {
+          activeAddFolderRow.insertBefore(newFolder, placeholder);
+        } else {
+          activeAddFolderRow.appendChild(newFolder);
+        }
+      }
+
+      const saved = JSON.parse(localStorage.getItem('jf_folder_edits') || '{}');
+      saved[folderId] = folderData;
+      localStorage.setItem('jf_folder_edits', JSON.stringify(saved));
+
+      closeFolderModal();
+    };
+  }
+
+  // ==========================================
+  // FLIPBOOK PAGE EDITOR HANDLERS
+  // ==========================================
+  const fbeModal = document.getElementById('jfFlipbookEditorModal');
+  const fbeModalHeading = document.getElementById('fbeModalHeading');
+  const fbePagesList = document.getElementById('fbePagesList');
+  const btnFbeClose = document.getElementById('btnFlipbookEditorClose');
+  const btnFbeCancel = document.getElementById('btnFbeCancel');
+  const btnFbeSave = document.getElementById('btnFbeSave');
+  const btnFbeAddPage = document.getElementById('btnFbeAddPage');
+
+  let activeFlipbookType = 'notey';
+
+  function closeFlipbookModal() {
+    if (fbeModal) fbeModal.style.display = 'none';
+  }
+
+  if (btnFbeClose) btnFbeClose.onclick = closeFlipbookModal;
+  if (btnFbeCancel) btnFbeCancel.onclick = closeFlipbookModal;
+
+  window.openFlipbookEditor = function(bookType) {
+    activeFlipbookType = bookType;
+    const pages = bookType === 'mykitab' ? mykitabPagesData : noteyPagesData;
+    const title = bookType === 'mykitab' ? 'MyKitab.pk 12 Notebook Covers' : 'NoteySTUFF Notebook Collection';
+
+    if (fbeModalHeading) fbeModalHeading.textContent = `Manage ${title} Pages (${pages.length})`;
+    renderFbePageRows(pages);
+
+    if (fbeModal) fbeModal.style.display = 'flex';
+  };
+
+  function renderFbePageRows(pages) {
+    if (!fbePagesList) return;
+    fbePagesList.innerHTML = '';
+
+    pages.forEach((src, idx) => {
+      const row = document.createElement('div');
+      row.className = 'fbe-page-row';
+      row.innerHTML = `
+        <img src="${src}" class="fbe-page-thumb" alt="Page ${idx + 1}" onerror="this.src='assets/portfolio_works/notey-cover.webp'">
+        <div class="fbe-page-inputs">
+          <input type="text" class="jf-form-input fbe-page-input" value="${src}" placeholder="Image URL">
+          <input type="file" accept="image/*" class="fbe-file-input">
+        </div>
+        <button type="button" class="fbe-btn-del" title="Remove Page">✕</button>
+      `;
+
+      const input = row.querySelector('.fbe-page-input');
+      const fileInput = row.querySelector('.fbe-file-input');
+      const thumb = row.querySelector('.fbe-page-thumb');
+      const delBtn = row.querySelector('.fbe-btn-del');
+
+      input.oninput = () => { thumb.src = input.value; };
+      fileInput.onchange = () => {
+        if (fileInput.files && fileInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (re) => {
+            input.value = re.target.result;
+            thumb.src = re.target.result;
+          };
+          reader.readAsDataURL(fileInput.files[0]);
+        }
+      };
+
+      delBtn.onclick = () => row.remove();
+      fbePagesList.appendChild(row);
+    });
+  }
+
+  if (btnFbeAddPage) {
+    btnFbeAddPage.onclick = () => {
+      if (!fbePagesList) return;
+      const row = document.createElement('div');
+      row.className = 'fbe-page-row';
+      row.innerHTML = `
+        <img src="assets/portfolio_works/notey-cover.webp" class="fbe-page-thumb" alt="New Page">
+        <div class="fbe-page-inputs">
+          <input type="text" class="jf-form-input fbe-page-input" value="assets/portfolio_works/notey-cover.webp" placeholder="Image URL">
+          <input type="file" accept="image/*" class="fbe-file-input">
+        </div>
+        <button type="button" class="fbe-btn-del" title="Remove Page">✕</button>
+      `;
+      const input = row.querySelector('.fbe-page-input');
+      const fileInput = row.querySelector('.fbe-file-input');
+      const thumb = row.querySelector('.fbe-page-thumb');
+      const delBtn = row.querySelector('.fbe-btn-del');
+
+      input.oninput = () => { thumb.src = input.value; };
+      fileInput.onchange = () => {
+        if (fileInput.files && fileInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (re) => {
+            input.value = re.target.result;
+            thumb.src = re.target.result;
+          };
+          reader.readAsDataURL(fileInput.files[0]);
+        }
+      };
+      delBtn.onclick = () => row.remove();
+      fbePagesList.appendChild(row);
+      row.scrollIntoView({ behavior: 'smooth' });
+    };
+  }
+
+  if (btnFbeSave) {
+    btnFbeSave.onclick = () => {
+      const inputs = fbePagesList.querySelectorAll('.fbe-page-input');
+      const newPages = Array.from(inputs).map(inp => inp.value.trim()).filter(Boolean);
+
+      if (newPages.length === 0) {
+        alert('Please keep at least 1 page in the flipbook!');
+        return;
+      }
+
+      if (activeFlipbookType === 'mykitab') {
+        mykitabPagesData = newPages;
+        localStorage.setItem('jf_flipbook_mykitab', JSON.stringify(newPages));
+        setupSingleFlipbook('mykitab', mykitabPagesData);
+      } else {
+        noteyPagesData = newPages;
+        localStorage.setItem('jf_flipbook_notey', JSON.stringify(newPages));
+        setupSingleFlipbook('notey', noteyPagesData);
+      }
+
+      closeFlipbookModal();
+      alert('🎉 Flipbook pages saved and updated successfully!');
+    };
+  }
+
+  // ==========================================
+  // 360 CAROUSEL SPOTLIGHT PROJECT EDITOR
+  // ==========================================
+  const c360Modal = document.getElementById('jfC360EditorModal');
+  const c360Form = document.getElementById('jfC360Form');
+  const btnC360Close = document.getElementById('btnC360Close');
+  const btnC360Cancel = document.getElementById('btnC360Cancel');
+  const btnC360Delete = document.getElementById('btnC360Delete');
+  const c360TitleInput = document.getElementById('c360Title');
+  const c360CategoryInput = document.getElementById('c360Category');
+  const c360DescInput = document.getElementById('c360Desc');
+  const c360ImgInput = document.getElementById('c360Img');
+  const c360ImgFileInput = document.getElementById('c360ImgFile');
+  const c360LinkInput = document.getElementById('c360Link');
+  const c360ModalHeading = document.getElementById('c360ModalHeading');
+
+  let active360EditIdx = -1;
+
+  function closeC360Modal() {
+    if (c360Modal) c360Modal.style.display = 'none';
+  }
+
+  if (btnC360Close) btnC360Close.onclick = closeC360Modal;
+  if (btnC360Cancel) btnC360Cancel.onclick = closeC360Modal;
+
+  window.openC360Editor = function() {
+    const counter = document.getElementById('c360CurrentIdx');
+    let idx = counter ? (parseInt(counter.textContent, 10) - 1) : 0;
+    if (isNaN(idx) || idx < 0 || idx >= c360Data.length) idx = 0;
+    active360EditIdx = idx;
+
+    const item = c360Data[idx];
+    if (c360ModalHeading) c360ModalHeading.textContent = `Edit 360 Project #${idx + 1}`;
+    if (c360TitleInput) c360TitleInput.value = item ? item.title : '';
+    if (c360CategoryInput) c360CategoryInput.value = item ? item.category : '';
+    if (c360DescInput) c360DescInput.value = item ? item.desc : '';
+    if (c360ImgInput) c360ImgInput.value = item ? item.img : '';
+    if (c360ImgFileInput) c360ImgFileInput.value = '';
+    if (c360LinkInput) c360LinkInput.value = item ? item.link : '';
+    if (btnC360Delete) btnC360Delete.style.display = 'inline-block';
+
+    if (c360Modal) c360Modal.style.display = 'flex';
+  };
+
+  window.openNew360Dialog = function() {
+    active360EditIdx = -1;
+    if (c360ModalHeading) c360ModalHeading.textContent = 'Add New 360 Spotlight Project';
+    if (c360Form) c360Form.reset();
+    if (btnC360Delete) btnC360Delete.style.display = 'none';
+    if (c360Modal) c360Modal.style.display = 'flex';
+  };
+
+  if (btnC360Delete) {
+    btnC360Delete.onclick = () => {
+      if (c360Data.length <= 1) {
+        alert('You must have at least 1 project in the 360 carousel!');
+        return;
+      }
+      if (confirm('Delete this 360 project?')) {
+        c360Data.splice(active360EditIdx, 1);
+        localStorage.setItem('jf_c360_data', JSON.stringify(c360Data));
+        initCarousel360();
+        closeC360Modal();
+      }
+    };
+  }
+
+  if (c360Form) {
+    c360Form.onsubmit = (e) => {
+      e.preventDefault();
+
+      const executeSave = (imgSrc) => {
+        const project = {
+          title: c360TitleInput ? c360TitleInput.value.trim() : 'Project',
+          category: c360CategoryInput ? c360CategoryInput.value.trim().toUpperCase() : 'DESIGN',
+          desc: c360DescInput ? c360DescInput.value.trim() : '',
+          img: imgSrc || 'assets/portfolio_works/notey-cover.webp',
+          link: c360LinkInput ? c360LinkInput.value.trim() : ''
+        };
+
+        if (active360EditIdx >= 0 && active360EditIdx < c360Data.length) {
+          c360Data[active360EditIdx] = project;
+        } else {
+          c360Data.push(project);
+        }
+
+        localStorage.setItem('jf_c360_data', JSON.stringify(c360Data));
+        initCarousel360();
+        closeC360Modal();
+        alert('🎉 360 Spotlight Projects updated successfully!');
+      };
+
+      if (c360ImgFileInput && c360ImgFileInput.files && c360ImgFileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (re) => executeSave(re.target.result);
+        reader.readAsDataURL(c360ImgFileInput.files[0]);
+      } else {
+        executeSave(c360ImgInput ? c360ImgInput.value.trim() : '');
+      }
+    };
+  }
+
   // 1-Click Export Live Clean HTML
   if (btnSaveLive) {
     btnSaveLive.addEventListener('click', async () => {
@@ -2035,9 +2632,12 @@ function initPortfolioStudio() {
         const cloneBody = docClone.querySelector('body') || docClone;
         cloneBody.classList.remove('jf-edit-active');
 
-        // Remove temporary attributes
+        // Remove temporary edit attributes and toolbars
         docClone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
         docClone.querySelectorAll('.jf-card-edit-overlay').forEach(el => el.remove());
+        docClone.querySelectorAll('.jf-section-reorder-bar').forEach(el => el.remove());
+        docClone.querySelectorAll('.jf-add-folder-placeholder').forEach(el => el.remove());
+        docClone.querySelectorAll('.jf-add-360-btn').forEach(el => el.remove());
 
         const cloneFab = docClone.querySelector('#jfStudioFab');
         if (cloneFab) cloneFab.style.display = 'none';
@@ -2088,7 +2688,13 @@ function initPortfolioStudio() {
         exportedAt: new Date().toISOString(),
         textEdits: JSON.parse(localStorage.getItem('jf_text_edits') || '{}'),
         cardEdits: JSON.parse(localStorage.getItem('jf_card_edits') || '{}'),
-        customGalleries: JSON.parse(localStorage.getItem('jf_custom_galleries') || '[]')
+        folderEdits: JSON.parse(localStorage.getItem('jf_folder_edits') || '{}'),
+        customGalleries: JSON.parse(localStorage.getItem('jf_custom_galleries') || '[]'),
+        flipbookNotey: JSON.parse(localStorage.getItem('jf_flipbook_notey') || '[]'),
+        flipbookMykitab: JSON.parse(localStorage.getItem('jf_flipbook_mykitab') || '[]'),
+        c360Data: JSON.parse(localStorage.getItem('jf_c360_data') || '[]'),
+        sectionOrder: JSON.parse(localStorage.getItem('jf_section_order') || '[]'),
+        paletteColors: JSON.parse(localStorage.getItem('jf_palette_colors') || '[]')
       };
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -2105,7 +2711,13 @@ function initPortfolioStudio() {
       if (confirm('Reset all website edits and restore original default data?')) {
         localStorage.removeItem('jf_text_edits');
         localStorage.removeItem('jf_card_edits');
+        localStorage.removeItem('jf_folder_edits');
         localStorage.removeItem('jf_custom_galleries');
+        localStorage.removeItem('jf_flipbook_notey');
+        localStorage.removeItem('jf_flipbook_mykitab');
+        localStorage.removeItem('jf_c360_data');
+        localStorage.removeItem('jf_section_order');
+        localStorage.removeItem('jf_palette_colors');
         sessionStorage.removeItem('jf_studio_auth');
         window.location.reload();
       }

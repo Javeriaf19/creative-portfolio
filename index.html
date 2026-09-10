@@ -33,11 +33,11 @@
         <li><a href="#showcase-360" class="nav-link" id="nl-showcase">Projects</a></li>
         <li><a href="#about" class="nav-link" id="nl-about">About</a></li>
         <li><a href="#experience" class="nav-link" id="nl-experience">Experience</a></li>
-        <li><a href="#work" class="nav-link" id="nl-work">Branding Work</a></li>
-        <li><a href="#notebook-flipbook" class="nav-link" id="nl-lookbook">Lookbook</a></li>
+        <li><a href="#work" class="nav-link" id="nl-work">Work</a></li>
+        <li><a href="#video-showcase" class="nav-link" id="nl-video">Video</a></li>
         <li><a href="#gallery" class="nav-link" id="nl-gallery">Gallery</a></li>
         <li><a href="#contact" class="nav-link" id="nl-contact">Contact</a></li>
-        <li><a href="assets/Javeria_Farhan_Design_Resume.pdf" download="Javeria_Farhan_Design_Resume.pdf" class="nav-link nav-resume-link" id="nl-resume">📄 Resume</a></li>
+        <li><a href="assets/Javeria_Farhan_Design_Resume.pdf" download="Javeria_Farhan_Design_Resume.pdf" class="nav-link nav-resume-link" id="nl-resume">Resume</a></li>
       </ul>
 
       <a href="mailto:javeriafarhan19@gmail.com" class="btn-nav-hire" id="btnNavHire">
@@ -122,6 +122,7 @@
         <!-- Center Spotlight Active Card -->
         <div class="c360-center-stage" id="c360CenterStage">
           <div class="c360-center-card" id="c360CenterCard">
+            <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openC360Editor()">✎ Edit Active 360 Project</button></div>
             <img src="assets/portfolio_works/notey-cover.webp" alt="Featured Project" id="c360CenterImg" class="c360-center-img">
             <div class="c360-center-overlay">
               <span class="c360-center-badge" id="c360CenterBadge">BRANDING &amp; PACKAGING</span>
@@ -141,10 +142,11 @@
         <button type="button" class="c360-btn c360-btn-prev" id="c360Prev" aria-label="Previous project in 3D orbit">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
         </button>
-        <div class="c360-counter"><span id="c360CurrentIdx">01</span> <span class="c360-sep">/</span> <span>06</span></div>
+        <div class="c360-counter"><span id="c360CurrentIdx">01</span> <span class="c360-sep">/</span> <span id="c360TotalCount">06</span></div>
         <button type="button" class="c360-btn c360-btn-next" id="c360Next" aria-label="Next project in 3D orbit">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
         </button>
+        <button type="button" class="jf-studio-btn jf-add-360-btn" id="btnAdd360Project" onclick="openNew360Dialog()" style="display:none; margin-left:14px; background:#8B00FF; padding:6px 14px; font-size:0.75rem;">+ Add 360 Project</button>
       </div>
     </div>
   </section>
@@ -164,7 +166,8 @@
         <div class="id-card-stage" id="idCardStage">
           <!-- ID Card Badge -->
           <div class="id-card-frame" id="idCardFrame" data-lightbox="assets/id-card.png" data-title="Javeria Farhan — Designer ID Card">
-            <img src="assets/id-card.png" alt="Javeria Farhan - AI-Driven Creative Professional ID Card" class="id-card-render" loading="eager">
+            <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openAvatarEditor('idcard')">✎ Edit ID Card Image</button></div>
+            <img src="assets/id-card.png" alt="Javeria Farhan - AI-Driven Creative Professional ID Card" class="id-card-render" id="idCardImg" loading="eager">
           </div>
         </div>
       </div>
@@ -1393,6 +1396,58 @@
             </div>
           </div>
         </div>
+
+        <!-- ===== DUAL INTERACTIVE IMAGE FLIPBOOKS (NOTEYSTUFF & MYKITAB.PK) ===== -->
+        <div class="dual-flipbook-container" style="margin-top:40px;">
+          <div class="cat-subhead-row" style="margin-bottom:20px;">
+            <span class="cat-badge" style="background:#E8006A; color:#FFF;">INTERACTIVE NOTEBOOK EDITIONS</span>
+            <h4 class="cat-title" style="font-size:1.5rem;">Interactive Notebook Lookbooks</h4>
+            <p class="cat-sub">High-resolution interactive page spreads showcasing NoteySTUFF product lines &amp; MyKitab.pk 12 custom covers.</p>
+          </div>
+
+          <div class="dual-flipbook-grid">
+            <!-- Flipbook 1: NoteySTUFF Notebooks -->
+            <div class="flipbook-card-item" id="flipbookNoteyWrap">
+              <div class="flipbook-card-head">
+                <span class="flipbook-brand-badge" style="background:#E8006A;">NOTEYSTUFF</span>
+                <h5 class="flipbook-brand-title">NoteySTUFF Notebook Collection</h5>
+                <div class="flipbook-page-counter"><span id="noteyPageNum">Page 1</span> / <span id="noteyTotalPages">6</span></div>
+              </div>
+              <div class="flipbook-image-stage" id="noteyImageStage">
+                <div class="flipbook-page-spread" id="noteySpreadEl">
+                  <img src="assets/portfolio_works/notey-cover.webp" alt="NoteySTUFF Notebook Spread" id="noteyActiveImg" class="flipbook-active-img" data-lightbox="assets/portfolio_works/notey-cover.webp">
+                </div>
+                <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openFlipbookEditor('notey')">✎ Edit / Add Pages</button></div>
+              </div>
+              <div class="flipbook-nav-controls">
+                <button type="button" class="flip-btn" id="noteyPrevBtn">← Prev</button>
+                <div class="flip-dots" id="noteyDots"></div>
+                <button type="button" class="flip-btn" id="noteyNextBtn">Next →</button>
+              </div>
+            </div>
+
+            <!-- Flipbook 2: MyKitab.pk 12 Notebooks -->
+            <div class="flipbook-card-item" id="flipbookMykitabWrap">
+              <div class="flipbook-card-head">
+                <span class="flipbook-brand-badge" style="background:#7000D1;">MYKITAB.PK</span>
+                <h5 class="flipbook-brand-title">MyKitab.pk 12 Custom Notebooks</h5>
+                <div class="flipbook-page-counter"><span id="mykitabPageNum">Page 1</span> / <span id="mykitabTotalPages">10</span></div>
+              </div>
+              <div class="flipbook-image-stage" id="mykitabImageStage">
+                <div class="flipbook-page-spread" id="mykitabSpreadEl">
+                  <img src="assets/portfolio_works/mykitab-cover-1.png" alt="MyKitab Notebook Spread" id="mykitabActiveImg" class="flipbook-active-img" data-lightbox="assets/portfolio_works/mykitab-cover-1.png">
+                </div>
+                <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openFlipbookEditor('mykitab')">✎ Edit / Add Pages</button></div>
+              </div>
+              <div class="flipbook-nav-controls">
+                <button type="button" class="flip-btn" id="mykitabPrevBtn">← Prev</button>
+                <div class="flip-dots" id="mykitabDots"></div>
+                <button type="button" class="flip-btn" id="mykitabNextBtn">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- ========================================================
@@ -1428,6 +1483,66 @@
             </div>
           </div>
         </div>
+
+        <!-- ===== FRAMER GALLERY STACK (3D FANNING DECK IN ILLUSTRATION) ===== -->
+        <div class="framer-stack-showcase" id="framerGalleryStack" style="margin-top:40px;">
+          <div class="cat-subhead-row" style="text-align:center; margin-bottom:20px;">
+            <span class="cat-badge" style="background:#8B00FF; color:#FFF;">3D INTERACTIVE DECK</span>
+            <h4 class="cat-title" style="font-size:1.5rem; color:#111;">Featured Illustration 3D Stack</h4>
+            <p class="cat-sub" style="color:#666; margin:6px auto 0;">Interactive fanning card deck. Click cards to cycle or fan through illustration &amp; character works.</p>
+          </div>
+
+          <div class="gallery-stack-viewport">
+            <div class="gallery-stack-deck" id="galleryStackDeck">
+              <!-- Stack Card 1 -->
+              <div class="gallery-stack-card stack-pos-0" data-lightbox="assets/portfolio_works/mykitab-cover-3.png" data-title="Botanical Abstract Line Art">
+                <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+                <img src="assets/portfolio_works/mykitab-cover-3.png" alt="Botanical Art" loading="lazy">
+                <div class="stack-card-meta">
+                  <span class="stack-badge">Illustration 01</span>
+                  <h4>Botanical Abstract Art</h4>
+                  <p>Hand-drawn fine vector line art &amp; motifs</p>
+                </div>
+              </div>
+              <!-- Stack Card 2 -->
+              <div class="gallery-stack-card stack-pos-1" data-lightbox="assets/portfolio_works/mykitab-cover-1.png" data-title="Kawaii Floral Character Art">
+                <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+                <img src="assets/portfolio_works/mykitab-cover-1.png" alt="Kawaii Floral" loading="lazy">
+                <div class="stack-card-meta">
+                  <span class="stack-badge">Illustration 02</span>
+                  <h4>Kawaii Floral Characters</h4>
+                  <p>Pastel sticker characters &amp; packaging motifs</p>
+                </div>
+              </div>
+              <!-- Stack Card 3 -->
+              <div class="gallery-stack-card stack-pos-2" data-lightbox="assets/portfolio_works/notey-spread.webp" data-title="Illustrated Inner Spreads">
+                <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+                <img src="assets/portfolio_works/notey-spread.webp" alt="Illustrated Spreads" loading="lazy">
+                <div class="stack-card-meta">
+                  <span class="stack-badge">Illustration 03</span>
+                  <h4>Inner Journal Illustrations</h4>
+                  <p>Editorial spot illustrations for NoteySTUFF</p>
+                </div>
+              </div>
+              <!-- Stack Card 4 -->
+              <div class="gallery-stack-card stack-pos-3" data-lightbox="assets/portfolio_works/mykitab-cover-2.png" data-title="Pastel Dreams Aesthetic Character">
+                <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+                <img src="assets/portfolio_works/mykitab-cover-2.png" alt="Pastel Dreams" loading="lazy">
+                <div class="stack-card-meta">
+                  <span class="stack-badge">Illustration 04</span>
+                  <h4>Pastel Dreams Artwork</h4>
+                  <p>Whimsical pastel vectors &amp; journal covers</p>
+                </div>
+              </div>
+            </div>
+            <div class="gallery-stack-controls">
+              <button type="button" class="stack-nav-btn" id="btnStackPrev" aria-label="Previous Card">←</button>
+              <span class="stack-counter" id="stackCounter">1 / 4</span>
+              <button type="button" class="stack-nav-btn" id="btnStackNext" aria-label="Next Card">→</button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- ========================================================
@@ -1465,109 +1580,7 @@
         </div>
       </div>
 
-      <!-- ========================================================
-           CENTERED BEHANCE CALLOUT STRIP
-           ======================================================== -->
-      <div class="behance-callout-strip">
-        <div class="strip-marquee">✦ COMPREHENSIVE ARCHIVE · VERIFIED WORK ON BEHANCE ✦</div>
-        <h3>Explore More Designs on <span class="grad-text">Behance</span></h3>
-        <p>Browse full-length case studies, high-resolution branding bibles, typography moodboards, and multi-slide carousel breakdowns.</p>
-        <a href="https://www.behance.net/javeriafarhan1" target="_blank" rel="noopener" class="btn-behance-lg">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7.7 10.5h3.6c.2-1.7-.8-2.6-2-2.6-1.3 0-2 .8-2.2 2.6zm6.5 2.8c0-1.8 1.1-2.9 2.7-2.9s2.6 1.1 2.6 2.9h-5.3zm-6.5 1.5h5.4c-.1 1.7-1.1 2.6-2.4 2.6-1.3 0-2.3-.9-2.5-2.6zM0 0v24h24V0H0zm8.3 6.6h3.7c2.4 0 4.1 1.2 4.1 3.2 0 1.2-.6 2.2-1.7 2.7 1.4.5 2.2 1.6 2.2 3.1 0 2.3-1.8 3.7-4.4 3.7H8.3V6.6zm9 2.2h3.5v1.2h-3.5V8.8zm3.5 8.1c0 2.4-1.9 4-4.5 4s-4.5-1.7-4.5-4.1c0-2.5 1.9-4.2 4.6-4.2 2.7 0 4.4 1.7 4.4 4.3z"/></svg>
-          <span>Open Full Behance Portfolio (javeriafarhan1) ↗</span>
-        </a>
-      </div>
-
     </div><!-- /container -->
-  </section>
-
-  <!-- ===== INTERACTIVE NOTEBOOK FLIPBOOK (MYKITAB.PK & NOTEYSTUFF) ===== -->
-  <section id="notebook-flipbook" class="flipbook-section" aria-label="Interactive Notebook Lookbook">
-    <div class="container">
-      <h2 class="sec-title centered">Flip The <span class="grad-text">Notebook Collection</span></h2>
-      <p class="sec-sub centered">Interactive 3D book spread featuring MyKitab.pk 12 notebook covers &amp; NoteySTUFF product lines.</p>
-
-      <div class="book-showcase-wrap">
-        <!-- Interactive FlipBook Container -->
-        <div class="book-viewport" id="bookViewport">
-          <div class="book-3d" id="book3D">
-            <!-- Left Page / Backing -->
-            <div class="book-page book-page-left" id="bookPageLeft">
-              <div class="book-page-inner">
-                <div class="book-header-line">
-                  <span class="book-meta-badge">MYKITAB.PK · 2026</span>
-                  <span class="book-page-num" id="bookLeftPageNum">Page 01</span>
-                </div>
-                <div class="book-page-body" id="bookLeftContent">
-                  <h3 class="book-spread-title">Kawaii Aesthetic Collection</h3>
-                  <p class="book-spread-desc">6 Cute, pastel-toned cover designs created for young students and aesthetic planners in Pakistan.</p>
-                  <div class="book-cover-grid">
-                    <div class="book-cover-mini" data-lightbox="assets/portfolio_works/mykitab-cover-1.png" data-title="Floral Aesthetic Notebook Cover">
-                      <img src="assets/portfolio_works/mykitab-cover-1.png" alt="Kawaii Floral Notebook Cover" class="bc-img">
-                      <span>Floral Aesthetic ↗</span>
-                    </div>
-                    <div class="book-cover-mini" data-lightbox="assets/portfolio_works/mykitab-cover-2.png" data-title="Pastel Dreams Cover">
-                      <img src="assets/portfolio_works/mykitab-cover-2.png" alt="Pastel Dreams Cover" class="bc-img">
-                      <span>Pastel Dreams ↗</span>
-                    </div>
-                  </div>
-                  <div class="book-specs-row">
-                    <div class="bs-spec"><strong>Binding:</strong> Perfect Bound</div>
-                    <div class="bs-spec"><strong>Finish:</strong> Soft Velvet Matte</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Central Spine -->
-            <div class="book-spine" aria-hidden="true"></div>
-
-            <!-- Right Page (Flips on click) -->
-            <div class="book-page book-page-right" id="bookPageRight">
-              <div class="book-page-inner">
-                <div class="book-header-line">
-                  <span class="book-meta-badge">HAND-DRAWN SERIES</span>
-                  <span class="book-page-num" id="bookRightPageNum">Page 02</span>
-                </div>
-                <div class="book-page-body" id="bookRightContent">
-                  <div class="book-featured-art" data-lightbox="assets/portfolio_works/mykitab-cover-3.png" data-title="Botanical & Hand-drawn Notebook Cover">
-                    <img src="assets/portfolio_works/mykitab-cover-3.png" alt="Featured Botanical Cover" id="bookRightImg" class="book-art-img">
-                    <div class="book-art-tag">6 Botanical &amp; Hand-drawn Covers ↗</div>
-                  </div>
-                  <h4 class="book-art-title" id="bookRightTitle">Botanical &amp; Abstract Line Art</h4>
-                  <p class="book-art-desc" id="bookRightDesc">Developed print-ready vectors, spine measurements, bleed margins, and barcode layouts for retail shelves.</p>
-                  <div class="book-cta-row">
-                    <a href="https://www.behance.net/gallery/254298367/MyKitabpk-Notebook-Collections-Designs" target="_blank" rel="noopener" class="btn-book-behance">
-                      <span>View Full Case Study on Behance</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div><!-- /book-3d -->
-        </div><!-- /book-viewport -->
-
-        <!-- Book Navigation Toolbar -->
-        <div class="book-nav-toolbar">
-          <button type="button" class="book-turn-btn" id="bookPrevBtn" aria-label="Previous book spread">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
-            <span>Previous Spread</span>
-          </button>
-
-          <div class="book-page-indicator">
-            <span class="bpi-dot active" data-spread="0">1</span>
-            <span class="bpi-dot" data-spread="1">2</span>
-            <span class="bpi-dot" data-spread="2">3</span>
-          </div>
-
-          <button type="button" class="book-turn-btn" id="bookNextBtn" aria-label="Next book spread">
-            <span>Next Spread</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- ===== FEATURED CASE STUDY (NOTEYSTUFF) ===== -->
@@ -1619,9 +1632,10 @@
         <!-- Visual right -->
         <div class="case-visual">
           <div class="case-img-wrap" data-lightbox="assets/portfolio_works/notey-mockup1.webp" data-title="NoteySTUFF — Full Brand Identity Mockup Suite">
+            <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit Featured Image</button></div>
             <img src="assets/portfolio_works/notey-mockup1.webp" alt="NoteySTUFF brand mockup" class="case-img" id="caseImg">
             <div class="case-float-tag">✦ Brand Identity (Click to Zoom)</div>
-            <div class="case-float-palette" aria-hidden="true">
+            <div class="case-float-palette" aria-hidden="true" id="caseFloatPalette">
               <div style="background:#FFB3D1"></div>
               <div style="background:#E8006A"></div>
               <div style="background:#C084FC"></div>
@@ -1786,89 +1800,23 @@
         </div>
       </div>
 
-      <!-- ===== FRAMER GALLERY STACK (3D FANNING DECK COMPONENT) ===== -->
-      <div class="framer-stack-showcase" id="framerGalleryStack" style="margin-top:60px;">
-        <div class="cat-subhead-row" style="text-align:center; margin-bottom:24px;">
-          <span class="cat-badge" style="background:#8B00FF; color:#FFF;">FRAMER INTERACTIVE DECK</span>
-          <h3 class="cat-title" style="color:#111;">Featured 3D Gallery Stack</h3>
-          <p class="cat-sub" style="color:#666; margin:8px auto 0;">Interactive fanning card deck. Click cards to cycle or fan through the top portfolio case studies.</p>
-        </div>
-
-        <div class="gallery-stack-viewport">
-          <div class="gallery-stack-deck" id="galleryStackDeck">
-            <!-- Stack Card 1 -->
-            <div class="gallery-stack-card stack-pos-0" data-lightbox="assets/portfolio_works/notey-cover.webp" data-title="NoteySTUFF — Stationery Brand Identity">
-              <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
-              <img src="assets/portfolio_works/notey-cover.webp" alt="NoteySTUFF Deck" loading="lazy">
-              <div class="stack-card-meta">
-                <span class="stack-badge">Featured 01</span>
-                <h4>NoteySTUFF Stationery Brand</h4>
-                <p>Complete 0-to-1 Brand Identity &amp; Packaging</p>
-              </div>
-            </div>
-            <!-- Stack Card 2 -->
-            <div class="gallery-stack-card stack-pos-1" data-lightbox="assets/portfolio_works/takhleeq-1.png" data-title="Takhleeq Karian — Visual System">
-              <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
-              <img src="assets/portfolio_works/takhleeq-1.png" alt="Takhleeq Deck" loading="lazy">
-              <div class="stack-card-meta">
-                <span class="stack-badge">Featured 02</span>
-                <h4>Takhleeq Karian Content System</h4>
-                <p>Social Media 9-Grid &amp; Guidelines</p>
-              </div>
-            </div>
-            <!-- Stack Card 3 -->
-            <div class="gallery-stack-card stack-pos-2" data-lightbox="assets/portfolio_works/mykitab-cover-1.png" data-title="MyKitab.pk — 12 Custom Notebooks">
-              <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
-              <img src="assets/portfolio_works/mykitab-cover-1.png" alt="MyKitab Deck" loading="lazy">
-              <div class="stack-card-meta">
-                <span class="stack-badge">Featured 03</span>
-                <h4>MyKitab.pk 12 Notebook Covers</h4>
-                <p>Kawaii &amp; Botanical Abstract Art</p>
-              </div>
-            </div>
-            <!-- Stack Card 4 -->
-            <div class="gallery-stack-card stack-pos-3" data-lightbox="assets/portfolio_works/elite-tech-1.png" data-title="Elite IT Team — Tech Carousel">
-              <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
-              <img src="assets/portfolio_works/elite-tech-1.png" alt="Elite Tech Deck" loading="lazy">
-              <div class="stack-card-meta">
-                <span class="stack-badge">Featured 04</span>
-                <h4>Future Of Tech Carousel</h4>
-                <p>AI &amp; Cybernetics Educational Deck</p>
-              </div>
-            </div>
-          </div>
-          <div class="gallery-stack-controls">
-            <button type="button" class="stack-nav-btn" id="btnStackPrev" aria-label="Previous Card">←</button>
-            <span class="stack-counter" id="stackCounter">1 / 4</span>
-            <button type="button" class="stack-nav-btn" id="btnStackNext" aria-label="Next Card">→</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== FRAMER ROUNDEL PRO (ROTATING BRAND SEAL RING) ===== -->
-      <div class="roundel-pro-wrap" style="margin-top:70px; text-align:center;">
-        <div class="cat-subhead-row" style="text-align:center; margin-bottom:20px;">
-          <span class="cat-badge" style="background:#FF2A85; color:#FFF;">BRAND MARKS &amp; EMBLEMS</span>
-          <h3 class="cat-title" style="color:#111;">Interactive Brand Roundel</h3>
-        </div>
-        <div class="roundel-center-stage">
-          <div class="roundel-orbit-ring" id="roundelOrbitRing">
-            <div class="roundel-badge-item" style="transform: rotate(0deg) translate(140px) rotate(0deg);"><span>NoteySTUFF</span></div>
-            <div class="roundel-badge-item" style="transform: rotate(60deg) translate(140px) rotate(-60deg);"><span>MyKitab.pk</span></div>
-            <div class="roundel-badge-item" style="transform: rotate(120deg) translate(140px) rotate(-120deg);"><span>Takhleeq</span></div>
-            <div class="roundel-badge-item" style="transform: rotate(180deg) translate(140px) rotate(-180deg);"><span>Elite IT</span></div>
-            <div class="roundel-badge-item" style="transform: rotate(240deg) translate(140px) rotate(-240deg);"><span>Fatima Jee's</span></div>
-            <div class="roundel-badge-item" style="transform: rotate(300deg) translate(140px) rotate(-300deg);"><span>NeuroStats</span></div>
-          </div>
-          <div class="roundel-core-emblem">
-            <span style="font-size:1.8rem;">✦</span>
-            <strong>JF</strong>
-            <small>EST. 2024</small>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
+
+  <!-- ===== CENTERED BEHANCE CALLOUT STRIP (BEFORE VIDEO SHOWCASE) ===== -->
+  <div class="behance-callout-strip-sec" style="margin:40px 0 20px;">
+    <div class="container">
+      <div class="behance-callout-strip">
+        <div class="strip-marquee">✦ COMPREHENSIVE ARCHIVE · VERIFIED WORK ON BEHANCE ✦</div>
+        <h3>Explore More Designs on <span class="grad-text">Behance</span></h3>
+        <p>Browse full-length case studies, high-resolution branding bibles, typography moodboards, and multi-slide carousel breakdowns.</p>
+        <a href="https://www.behance.net/javeriafarhan1" target="_blank" rel="noopener" class="btn-behance-lg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7.7 10.5h3.6c.2-1.7-.8-2.6-2-2.6-1.3 0-2 .8-2.2 2.6zm6.5 2.8c0-1.8 1.1-2.9 2.7-2.9s2.6 1.1 2.6 2.9h-5.3zm-6.5 1.5h5.4c-.1 1.7-1.1 2.6-2.4 2.6-1.3 0-2.3-.9-2.5-2.6zM0 0v24h24V0H0zm8.3 6.6h3.7c2.4 0 4.1 1.2 4.1 3.2 0 1.2-.6 2.2-1.7 2.7 1.4.5 2.2 1.6 2.2 3.1 0 2.3-1.8 3.7-4.4 3.7H8.3V6.6zm9 2.2h3.5v1.2h-3.5V8.8zm3.5 8.1c0 2.4-1.9 4-4.5 4s-4.5-1.7-4.5-4.1c0-2.5 1.9-4.2 4.6-4.2 2.7 0 4.4 1.7 4.4 4.3z"/></svg>
+          <span>Open Full Behance Portfolio (javeriafarhan1) ↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
 
   <!-- ===== VIDEO & MOTION SHOWCASE (FRAMER iOS PLAYER & 3D TURNSTILE CAROUSEL) ===== -->
   <section id="video-showcase" class="video-showcase-sec" aria-label="Video & Motion Design Showcase">
@@ -2001,13 +1949,7 @@
       </div>
 
       <!-- Consolidated 3D Display Rig (Realistic Mobile & Laptop Mockup Displays) -->
-      <div class="video-3d-hardware-row" style="margin-top:55px;">
-        <div class="cat-subhead-row" style="text-align:center; margin-bottom:28px;">
-          <span class="cat-badge" style="background:#52008C; color:#FFF;">HARDWARE MOTION PREVIEW</span>
-          <h3 class="cat-title" style="color:#111;">Realistic Device Mockup Displays</h3>
-          <p class="cat-sub" style="color:#555; margin:8px auto 0;">Client preview formats presented on realistic 3D mobile &amp; laptop hardware screens.</p>
-        </div>
-
+      <div class="video-3d-hardware-row" style="margin-top:45px;">
         <div class="video-mockup-row">
           <!-- 3D Mobile Mockup 1: Greenland Reel -->
           <div class="phone-mockup-3d">
@@ -2311,12 +2253,13 @@
         <!-- Left: Holo Profile Card -->
         <div class="holo-card-col">
           <div class="holo-profile-card" id="holoProfileCard">
+            <div class="jf-card-edit-overlay"><button class="jf-btn-card-edit" onclick="openAvatarEditor('holo')">✎ Edit Profile &amp; Image</button></div>
             <div class="holo-card-inner">
               
               <!-- Top Row: Avatar + Name & Title -->
               <div class="holo-header">
                 <div class="holo-avatar-wrap">
-                  <img src="assets/avatar.png" alt="Javeria Farhan" class="holo-avatar-img">
+                  <img src="assets/avatar.png" alt="Javeria Farhan" class="holo-avatar-img" id="holoAvatarImg">
                   <div class="holo-avatar-border"></div>
                 </div>
                 <div class="holo-title-group">
@@ -2431,8 +2374,8 @@
             <li><a href="#showcase-360">Explore Projects</a></li>
             <li><a href="#about">About Me</a></li>
             <li><a href="#experience">Experience</a></li>
-            <li><a href="#work">Branding Work</a></li>
-            <li><a href="#notebook-flipbook">Notebook Lookbook</a></li>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#video-showcase">Motion &amp; Video</a></li>
             <li><a href="#gallery">Portfolio Gallery</a></li>
             <li><a href="assets/Javeria_Farhan_Design_Resume.pdf" download="Javeria_Farhan_Design_Resume.pdf">Download Resume (PDF)</a></li>
           </ul>
@@ -2645,6 +2588,128 @@
       <div class="pl-meta">
         <div class="pl-title" id="plVideoTitle">Video Commercial</div>
       </div>
+    </div>
+  </div>
+
+  <!-- Studio: Folder Editor Modal -->
+  <div class="jf-modal-backdrop" id="jfFolderEditorModal" role="dialog" aria-modal="true">
+    <div class="jf-modal-box">
+      <div class="jf-modal-header">
+        <h3 class="jf-modal-title" id="feModalHeading">Edit Project Folder</h3>
+        <button type="button" class="jf-modal-close" id="btnFolderEditorClose">&times;</button>
+      </div>
+      <form id="jfFolderEditorForm">
+        <input type="hidden" id="feFolderId">
+        <div class="jf-form-group">
+          <label class="jf-form-label">Folder Name / Tab Label</label>
+          <input type="text" id="feFolderName" class="jf-form-input" placeholder="e.g. Noteystuff, KidFit, Greenland" required>
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Category Subtitle</label>
+          <input type="text" id="feFolderCat" class="jf-form-input" placeholder="e.g. Brand Identity · 2024-25">
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Folder Color Theme</label>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <input type="color" id="feFolderColor" value="#E8006A" style="width:50px; height:38px; border:none; border-radius:6px; cursor:pointer;">
+            <input type="text" id="feFolderColorHex" class="jf-form-input" placeholder="#E8006A" style="flex:1;">
+          </div>
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Behance Project URL</label>
+          <input type="url" id="feBehanceLink" class="jf-form-input" placeholder="https://www.behance.net/gallery/...">
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Card Heading</label>
+          <input type="text" id="feTitle" class="jf-form-input" placeholder="e.g. Noteystuff Complete Identity">
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Card Description</label>
+          <textarea id="feDesc" class="jf-form-textarea" rows="2" placeholder="e.g. Logo system, Kawaii notebook collections, patterns & custom packaging"></textarea>
+        </div>
+        <!-- 3 Inner Paper Images -->
+        <div class="jf-form-group">
+          <label class="jf-form-label">Inside Paper 1 (Image URL or Upload)</label>
+          <input type="text" id="feImg1" class="jf-form-input" placeholder="assets/portfolio_works/..." style="margin-bottom:6px;">
+          <input type="file" id="feImg1File" accept="image/*" class="jf-form-input" style="padding:4px; margin-bottom:8px;">
+          <input type="text" id="feImg1Label" class="jf-form-input" placeholder="Paper 1 Label (e.g. Notebooks, Logo, Cover)">
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Inside Paper 2 (Image URL or Upload)</label>
+          <input type="text" id="feImg2" class="jf-form-input" placeholder="assets/portfolio_works/..." style="margin-bottom:6px;">
+          <input type="file" id="feImg2File" accept="image/*" class="jf-form-input" style="padding:4px; margin-bottom:8px;">
+          <input type="text" id="feImg2Label" class="jf-form-input" placeholder="Paper 2 Label (e.g. Stationery, Mockup)">
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Inside Paper 3 (Image URL or Upload)</label>
+          <input type="text" id="feImg3" class="jf-form-input" placeholder="assets/portfolio_works/..." style="margin-bottom:6px;">
+          <input type="file" id="feImg3File" accept="image/*" class="jf-form-input" style="padding:4px; margin-bottom:8px;">
+          <input type="text" id="feImg3Label" class="jf-form-input" placeholder="Paper 3 Label (e.g. Packaging, Unbox)">
+        </div>
+        <div class="jf-modal-actions">
+          <button type="button" class="jf-studio-btn jf-studio-btn-secondary" id="btnFolderDelete" style="color:#FF4B72; margin-right:auto;">Delete Folder</button>
+          <button type="button" class="jf-studio-btn jf-studio-btn-secondary" id="btnFolderCancel">Cancel</button>
+          <button type="submit" class="jf-studio-btn" id="btnFolderSave">Save Folder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Studio: Flipbook Page Editor Modal -->
+  <div class="jf-modal-backdrop" id="jfFlipbookEditorModal" role="dialog" aria-modal="true">
+    <div class="jf-modal-box">
+      <div class="jf-modal-header">
+        <h3 class="jf-modal-title" id="fbeModalHeading">Manage Flipbook Pages</h3>
+        <button type="button" class="jf-modal-close" id="btnFlipbookEditorClose">&times;</button>
+      </div>
+      <div id="fbePagesList" style="display:flex; flex-direction:column; gap:12px; max-height:350px; overflow-y:auto; margin-bottom:18px; padding-right:6px;">
+        <!-- Dynamically injected page items with thumbnail, url input, and delete button -->
+      </div>
+      <div style="margin-bottom:16px;">
+        <button type="button" class="jf-studio-btn" id="btnFbeAddPage" style="background:#8B00FF; width:100%;">+ Add Another Page Image</button>
+      </div>
+      <div class="jf-modal-actions">
+        <button type="button" class="jf-studio-btn jf-studio-btn-secondary" id="btnFbeCancel">Cancel</button>
+        <button type="button" class="jf-studio-btn" id="btnFbeSave">Save All Pages</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Studio: 360 Carousel Project Editor Modal -->
+  <div class="jf-modal-backdrop" id="jfC360EditorModal" role="dialog" aria-modal="true">
+    <div class="jf-modal-box">
+      <div class="jf-modal-header">
+        <h3 class="jf-modal-title" id="c360ModalHeading">Edit 360 Spotlight Project</h3>
+        <button type="button" class="jf-modal-close" id="btnC360Close">&times;</button>
+      </div>
+      <form id="jfC360Form">
+        <div class="jf-form-group">
+          <label class="jf-form-label">Project Title</label>
+          <input type="text" id="c360Title" class="jf-form-input" placeholder="e.g. NoteySTUFF Stationery Brand" required>
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Category Badge</label>
+          <input type="text" id="c360Category" class="jf-form-input" placeholder="e.g. BRANDING & PACKAGING" required>
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Description</label>
+          <textarea id="c360Desc" class="jf-form-textarea" rows="2" placeholder="e.g. 0-to-1 brand identity, custom notebooks & packaging."></textarea>
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Project Image URL</label>
+          <input type="text" id="c360Img" class="jf-form-input" placeholder="assets/portfolio_works/... or https://..." style="margin-bottom:6px;">
+          <input type="file" id="c360ImgFile" accept="image/*" class="jf-form-input" style="padding:4px;">
+        </div>
+        <div class="jf-form-group">
+          <label class="jf-form-label">Behance / Project Link</label>
+          <input type="url" id="c360Link" class="jf-form-input" placeholder="https://www.behance.net/gallery/...">
+        </div>
+        <div class="jf-modal-actions">
+          <button type="button" class="jf-studio-btn jf-studio-btn-secondary" id="btnC360Delete" style="color:#FF4B72; margin-right:auto;">Delete Project</button>
+          <button type="button" class="jf-studio-btn jf-studio-btn-secondary" id="btnC360Cancel">Cancel</button>
+          <button type="submit" class="jf-studio-btn" id="btnC360Save">Save Project</button>
+        </div>
+      </form>
     </div>
   </div>
 
