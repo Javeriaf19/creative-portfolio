@@ -1,4 +1,4 @@
-﻿# ✨ Javeria Fatima — Creative Portfolio & Motion Showcase
+# ✨ Javeria Fatima — Creative Portfolio & Motion Showcase
 
 A high-performance, responsive portfolio website crafted for **Javeria Fatima** (Graphic Designer, Visual Artist & Creative Director based in Lahore, Pakistan).
 
@@ -39,16 +39,16 @@ The website features an invisible, in-browser Live Studio CMS allowing real-time
 
 Simply clone the repository and open index.html in any modern web browser:
 
-`ash
+```bash
 # Clone repository
-git clone https://github.com/Javeriaf19/portfolio.git
+git clone https://github.com/Javeriaf19/creative-portfolio.git
 
 # Navigate to folder
-cd portfolio
+cd creative-portfolio
 
 # Open in browser (Windows)
 start index.html
-`
+```
 
 ---
 
@@ -56,13 +56,13 @@ start index.html
 
 ### Option 1: GitHub Pages (Free)
 1. Go to repository **Settings** → **Pages**.
-2. Under **Build and deployment**, set **Source** to Deploy from a branch.
-3. Select main branch and / (root) folder, then click **Save**.
-4. Your site will be live at https://Javeriaf19.github.io/portfolio/.
+2. Under **Build and deployment**, set **Source** to `Deploy from a branch`.
+3. Select `main` branch and `/ (root)` folder, then click **Save**.
+4. Your site will be live at `https://Javeriaf19.github.io/creative-portfolio/`.
 
 ### Option 2: Vercel (Recommended for fast CDN)
 1. Sign in to [Vercel](https://vercel.com) using your GitHub account.
-2. Click **Add New Project** → Import portfolio.
+2. Click **Add New Project** → Import `creative-portfolio`.
 3. Click **Deploy** — Vercel will automatically build and assign a global, ultra-fast custom URL with free SSL.
 
 ---
