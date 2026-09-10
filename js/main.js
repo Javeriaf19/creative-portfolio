@@ -1284,15 +1284,22 @@ function initVelocityGallery() {
   if (!trackA || !trackB) return;
 
   let posA = 0;
-  let posB = 0;
-  const baseSpeed = 0.85;
+  let posB = -2000;
+  const baseSpeed = 0.95;
   let velocitySpeed = 0;
   let lastScrollY = window.scrollY;
+
+  // Measure initial halfWidthB for smooth start
+  requestAnimationFrame(() => {
+    if (trackB && trackB.scrollWidth > 0) {
+      posB = -(trackB.scrollWidth / 2);
+    }
+  });
 
   window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
     const diff = currentScrollY - lastScrollY;
-    velocitySpeed = Math.min(10, Math.abs(diff) * 0.28);
+    velocitySpeed = Math.min(12, Math.abs(diff) * 0.32);
     lastScrollY = currentScrollY;
   }, { passive: true });
 
@@ -1304,12 +1311,12 @@ function initVelocityGallery() {
     posB += currentSpeed;
 
     const halfWidthA = trackA.scrollWidth / 2;
-    if (Math.abs(posA) >= halfWidthA) posA = 0;
-    trackA.style.transform = `translateX(${posA}px)`;
+    if (halfWidthA > 0 && Math.abs(posA) >= halfWidthA) posA = 0;
+    trackA.style.transform = `translate3d(${posA}px, 0, 0)`;
 
     const halfWidthB = trackB.scrollWidth / 2;
-    if (posB >= 0) posB = -halfWidthB;
-    trackB.style.transform = `translateX(${posB}px)`;
+    if (halfWidthB > 0 && posB >= 0) posB = -halfWidthB;
+    trackB.style.transform = `translate3d(${posB}px, 0, 0)`;
 
     requestAnimationFrame(animate);
   }
