@@ -1854,15 +1854,25 @@ function initPortfolioStudio() {
   }
 
   function attachAllGalleryAddButtons() {
-    const gallerySelectors = '.cat-showcase-grid, .bento-gallery-grid, .bento-grid, .act-img-grid, #velocityTrackA';
+    const gallerySelectors = '.cat-showcase-grid, .bento-gallery-grid, .bento-grid, .act-img-grid, .velocity-track, .motion-tiles-grid, .video-turnstile-grid';
     document.querySelectorAll(gallerySelectors).forEach(grid => {
-      if (!grid.querySelector('.jf-add-card-placeholder')) {
-        const ph = document.createElement('div');
+      let ph = grid.querySelector('.jf-add-card-placeholder');
+      if (!ph) {
+        ph = document.createElement('div');
         ph.className = 'jf-add-card-placeholder';
-        ph.onclick = function() { window.openNewCardDialog(this); };
+        if (grid.classList.contains('motion-tiles-grid')) ph.classList.add('jf-add-mt-card');
+        if (grid.classList.contains('video-turnstile-grid')) ph.classList.add('jf-add-video-card');
         ph.innerHTML = '<span style="font-size:1.6rem; line-height:1;">+</span><span>Add Image Card</span>';
         grid.appendChild(ph);
       }
+      ph.onclick = function(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        let type = 'image';
+        if (grid.classList.contains('video-turnstile-grid') || ph.classList.contains('jf-add-video-card')) type = 'video';
+        else if (grid.classList.contains('motion-tiles-grid') || ph.classList.contains('jf-add-mt-card')) type = 'mt-card';
+        else if (grid.classList.contains('bento-gallery-grid') || grid.classList.contains('bento-grid')) type = 'bento-cell';
+        window.openNewCardDialog(this, type);
+      };
     });
   }
 
@@ -1955,7 +1965,9 @@ function initPortfolioStudio() {
               const selector = rec.containerClass === 'bento' ? '.bento-gallery-grid, .bento-grid' :
                                rec.containerClass === 'cat' ? '.cat-showcase-grid' :
                                rec.containerClass === 'act' ? '.act-img-grid' :
-                               rec.containerClass === 'velocity' ? '.velocity-track' : '.cat-showcase-grid';
+                               rec.containerClass === 'velocity' ? '.velocity-track' :
+                               rec.containerClass === 'mt' ? '.motion-tiles-grid' :
+                               rec.containerClass === 'video' ? '.video-turnstile-grid' : '.cat-showcase-grid';
               const allTargets = document.querySelectorAll(selector);
               target = allTargets[rec.containerIndex || 0] || allTargets[0];
             }
@@ -2113,6 +2125,29 @@ function initPortfolioStudio() {
         <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="velocity-img" loading="lazy">
         <span class="velocity-badge">${cardData.title}</span>
       `;
+    } else if (containerClass === 'mt') {
+      card = document.createElement('div');
+      card.className = 'mt-card';
+      card.setAttribute('data-card-id', cardId);
+      card.setAttribute('data-lightbox', cardData.img || 'assets/portfolio_works/notey-cover.webp');
+      card.setAttribute('data-title', cardData.title || 'Motion Showcase');
+      if (cardData.behance) card.setAttribute('data-behance', cardData.behance);
+      card.innerHTML = `
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <div class="mt-card-media">
+          <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="mt-img" loading="lazy">
+          <div class="mt-badge-top">
+            <span class="mt-tag-brand">${cardData.desc || 'Design'}</span>
+          </div>
+        </div>
+        <div class="mt-card-info">
+          <div class="mt-title-row">
+            <h3 data-jf-id="${cardId}_title" data-jf-editable="true">${cardData.title}</h3>
+            ${cardData.behance ? `<a href="${cardData.behance}" target="_blank" rel="noopener" class="mt-arrow">↗</a>` : '<span class="mt-arrow">↗</span>'}
+          </div>
+          <p data-jf-id="${cardId}_desc" data-jf-editable="true">${cardData.desc || ''}</p>
+        </div>
+      `;
     } else {
       card = document.createElement('div');
       card.className = 'cat-img-card';
@@ -2185,15 +2220,26 @@ function initPortfolioStudio() {
 
   // Open "Add New Card" dialog for any gallery container
   window.openNewCardDialog = function(btnPlaceholder, defaultMediaType = 'image') {
-    activeAddTargetContainer = btnPlaceholder.parentElement;
+    const placeholderEl = (btnPlaceholder && btnPlaceholder.closest) ? (btnPlaceholder.closest('.jf-add-card-placeholder') || btnPlaceholder) : btnPlaceholder;
+    activeAddTargetContainer = placeholderEl ? (placeholderEl.closest('.cat-showcase-grid, .bento-gallery-grid, .bento-grid, .act-img-grid, .velocity-track, .motion-tiles-grid, .video-turnstile-grid, .bento-gallery-wrap') || placeholderEl.parentElement) : null;
     activeAddMediaType = defaultMediaType;
     activeEditCard = null;
 
-    if (cardHeading) cardHeading.textContent = `Add New ${defaultMediaType === 'video' ? 'Video Showcase' : 'Project Card'}`;
+    if (activeAddTargetContainer) {
+      if (activeAddTargetContainer.classList.contains('video-turnstile-grid') || (placeholderEl && placeholderEl.classList.contains('jf-add-video-card'))) {
+        activeAddMediaType = 'video';
+      } else if (activeAddTargetContainer.classList.contains('motion-tiles-grid') || (placeholderEl && placeholderEl.classList.contains('jf-add-mt-card'))) {
+        activeAddMediaType = 'mt-card';
+      } else if (activeAddTargetContainer.classList.contains('bento-gallery-grid') || activeAddTargetContainer.classList.contains('bento-grid')) {
+        activeAddMediaType = 'bento-cell';
+      }
+    }
+
+    if (cardHeading) cardHeading.textContent = `Add New ${activeAddMediaType === 'video' ? 'Video Showcase' : (activeAddMediaType === 'mt-card' ? 'Motion Tile' : 'Project Card')}`;
     if (cardDelete) cardDelete.style.display = 'none';
 
     if (ceMediaType) {
-      ceMediaType.value = defaultMediaType;
+      ceMediaType.value = activeAddMediaType === 'video' ? 'video' : 'image';
       ceMediaType.dispatchEvent(new Event('change'));
     }
 
@@ -2306,11 +2352,11 @@ function initPortfolioStudio() {
       const executeSave = (mediaSrc) => {
         const cardData = {
           mediaType: mediaType,
-          title: ceTitle ? ceTitle.value.trim() : 'New Project',
+          title: ceTitle && ceTitle.value.trim() ? ceTitle.value.trim() : 'New Project',
           desc: ceDesc ? ceDesc.value.trim() : '',
-          img: isVideo ? (ceVideoPoster ? ceVideoPoster.value.trim() : '') : mediaSrc,
-          videoUrl: isVideo ? mediaSrc : '',
-          videoPoster: ceVideoPoster ? ceVideoPoster.value.trim() : '',
+          img: isVideo ? (ceVideoPoster ? ceVideoPoster.value.trim() : '') : (mediaSrc || 'assets/portfolio_works/notey-cover.webp'),
+          videoUrl: isVideo ? (mediaSrc || 'assets/videos/aero-video.mp4') : '',
+          videoPoster: ceVideoPoster && ceVideoPoster.value.trim() ? ceVideoPoster.value.trim() : (isVideo ? 'assets/portfolio_works/aero-1.png' : ''),
           behance: ceBehanceLink ? ceBehanceLink.value.trim() : '',
           span: ceSpanSelect ? ceSpanSelect.value : 'bento-span-1x1',
           focal: ceFocalSelect ? ceFocalSelect.value : 'center'
@@ -2318,63 +2364,77 @@ function initPortfolioStudio() {
 
         if (activeEditCard) {
           // Editing existing card
-          const cardId = activeEditCard.getAttribute('data-card-id');
+          const cardId = activeEditCard.getAttribute('data-card-id') || `card-${Date.now()}`;
+          activeEditCard.setAttribute('data-card-id', cardId);
           applyCardData(activeEditCard, cardData);
 
           const saved = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
           saved[cardId] = cardData;
           localStorage.setItem('jf_card_edits', JSON.stringify(saved));
-        } else if (activeAddTargetContainer) {
-          // Creating brand new card
-          const newCardId = `card-new-${Date.now()}`;
-          const isBento = activeAddTargetContainer.classList.contains('bento-gallery-grid') || activeAddTargetContainer.classList.contains('bento-grid');
-          const isCatShowcase = activeAddTargetContainer.classList.contains('cat-showcase-grid');
-          const isActImg = activeAddTargetContainer.classList.contains('act-img-grid');
-          const isVelocity = activeAddTargetContainer.classList.contains('velocity-track');
-          const isVideoContainer = activeAddTargetContainer.classList.contains('video-turnstile-grid') || isVideo;
-
-          let containerClass = 'cat';
-          if (isVideoContainer) containerClass = 'video';
-          else if (isBento) containerClass = 'bento';
-          else if (isActImg) containerClass = 'act';
-          else if (isVelocity) containerClass = 'velocity';
-          else if (isCatShowcase) containerClass = 'cat';
-
-          const newCard = createCustomCardElement(newCardId, cardData, containerClass);
-
-          // Insert before placeholder button
-          const placeholder = activeAddTargetContainer.querySelector('.jf-add-card-placeholder');
-          if (placeholder) {
-            activeAddTargetContainer.insertBefore(newCard, placeholder);
-          } else {
-            activeAddTargetContainer.appendChild(newCard);
+          showSaveToast('✓ Card Updated Successfully!');
+        } else {
+          // Fallback container if reference was lost
+          if (!activeAddTargetContainer) {
+            activeAddTargetContainer = document.querySelector('.cat-showcase-grid.active, .cat-showcase-grid, #grid-branding-showcase');
           }
 
-          // Compute containerIndex among matching containers
-          const selectorMap = {
-            bento: '.bento-gallery-grid, .bento-grid',
-            cat: '.cat-showcase-grid',
-            act: '.act-img-grid',
-            velocity: '.velocity-track',
-            video: '.video-turnstile-grid'
-          };
-          const allMatching = Array.from(document.querySelectorAll(selectorMap[containerClass] || '.cat-showcase-grid'));
-          const containerIndex = allMatching.indexOf(activeAddTargetContainer);
+          if (activeAddTargetContainer) {
+            // Creating brand new card
+            const newCardId = `card-new-${Date.now()}`;
+            const isBento = activeAddTargetContainer.classList.contains('bento-gallery-grid') || activeAddTargetContainer.classList.contains('bento-grid');
+            const isCatShowcase = activeAddTargetContainer.classList.contains('cat-showcase-grid');
+            const isActImg = activeAddTargetContainer.classList.contains('act-img-grid');
+            const isVelocity = activeAddTargetContainer.classList.contains('velocity-track');
+            const isMt = activeAddTargetContainer.classList.contains('motion-tiles-grid') || activeAddTargetContainer.id === 'motionTilesGrid';
+            const isVideoContainer = activeAddTargetContainer.classList.contains('video-turnstile-grid') || isVideo;
 
-          // Save to jf_custom_cards
-          const customList = JSON.parse(localStorage.getItem('jf_custom_cards') || '[]');
-          customList.push({
-            id: newCardId,
-            containerId: activeAddTargetContainer.id || null,
-            containerClass: containerClass,
-            containerIndex: containerIndex >= 0 ? containerIndex : 0,
-            cardData: cardData
-          });
-          localStorage.setItem('jf_custom_cards', JSON.stringify(customList));
+            let containerClass = 'cat';
+            if (isVideoContainer) containerClass = 'video';
+            else if (isMt) containerClass = 'mt';
+            else if (isBento) containerClass = 'bento';
+            else if (isActImg) containerClass = 'act';
+            else if (isVelocity) containerClass = 'velocity';
+            else if (isCatShowcase) containerClass = 'cat';
 
-          const saved = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
-          saved[newCardId] = cardData;
-          localStorage.setItem('jf_card_edits', JSON.stringify(saved));
+            const newCard = createCustomCardElement(newCardId, cardData, containerClass);
+
+            // Insert before placeholder button
+            const placeholder = activeAddTargetContainer.querySelector('.jf-add-card-placeholder');
+            if (placeholder) {
+              activeAddTargetContainer.insertBefore(newCard, placeholder);
+            } else {
+              activeAddTargetContainer.appendChild(newCard);
+            }
+
+            // Compute containerIndex among matching containers
+            const selectorMap = {
+              bento: '.bento-gallery-grid, .bento-grid',
+              cat: '.cat-showcase-grid',
+              act: '.act-img-grid',
+              velocity: '.velocity-track',
+              mt: '.motion-tiles-grid',
+              video: '.video-turnstile-grid'
+            };
+            const allMatching = Array.from(document.querySelectorAll(selectorMap[containerClass] || '.cat-showcase-grid'));
+            const containerIndex = allMatching.indexOf(activeAddTargetContainer);
+
+            // Save to jf_custom_cards
+            const customList = JSON.parse(localStorage.getItem('jf_custom_cards') || '[]');
+            customList.push({
+              id: newCardId,
+              containerId: activeAddTargetContainer.id || null,
+              containerClass: containerClass,
+              containerIndex: containerIndex >= 0 ? containerIndex : 0,
+              cardData: cardData
+            });
+            localStorage.setItem('jf_custom_cards', JSON.stringify(customList));
+
+            const saved = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
+            saved[newCardId] = cardData;
+            localStorage.setItem('jf_card_edits', JSON.stringify(saved));
+
+            showSaveToast('✓ Card Added Successfully!');
+          }
         }
 
         closeCardModal();
@@ -2399,6 +2459,20 @@ function initPortfolioStudio() {
       }
     });
   }
+
+  // Global Delegated click listener for all "+ Add Image Card" placeholders
+  document.addEventListener('click', (e) => {
+    const ph = e.target.closest('.jf-add-card-placeholder');
+    if (ph) {
+      e.preventDefault();
+      e.stopPropagation();
+      let type = 'image';
+      if (ph.classList.contains('jf-add-video-card') || ph.closest('.video-turnstile-grid')) type = 'video';
+      else if (ph.classList.contains('jf-add-mt-card') || ph.closest('.motion-tiles-grid')) type = 'mt-card';
+      else if (ph.closest('.bento-gallery-grid, .bento-grid')) type = 'bento-cell';
+      window.openNewCardDialog(ph, type);
+    }
+  });
 
   // ==========================================
   // CUSTOM NEW GALLERY SECTION CREATION
