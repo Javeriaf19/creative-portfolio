@@ -1093,6 +1093,7 @@
 }
 
 .folder-unit {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1135,6 +1136,12 @@
   pointer-events: none;
 }
 
+.folder-unit:hover .folder-papers,
+.folder-unit.folder-open .folder-papers {
+  pointer-events: auto !important;
+  z-index: 8;
+}
+
 .folder-paper {
   position: absolute;
   bottom: 12px;
@@ -1149,8 +1156,15 @@
   flex-direction: column;
   transform: translate(-50%, 0) scale(0.85);
   opacity: 0;
-  transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
+  transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease, box-shadow 0.3s ease;
   will-change: transform, opacity;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.folder-paper:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.4), 0 0 18px rgba(255, 43, 133, 0.45);
 }
 
 .fp-img {
@@ -5361,4 +5375,62 @@ body.jf-edit-active .jf-add-360-btn {
   background: #FF4B72;
   color: #FFFFFF;
 }
+
+/* Studio: Add Image Card Placeholder for All Galleries */
+.jf-add-card-placeholder {
+  display: none;
+  min-height: 200px;
+  border: 2px dashed rgba(255, 43, 133, 0.5);
+  border-radius: 16px;
+  background: rgba(255, 43, 133, 0.05);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #FF70A6;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  padding: 20px;
+}
+
+body.jf-edit-active .jf-add-card-placeholder {
+  display: flex !important;
+}
+
+.jf-add-card-placeholder:hover {
+  background: rgba(255, 43, 133, 0.16);
+  border-color: #FF2B85;
+  color: #FFFFFF;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(255, 43, 133, 0.3);
+}
+
+/* Folder Edit Overlay Position */
+body.jf-edit-active .folder-unit .jf-card-edit-overlay {
+  display: flex !important;
+  position: absolute;
+  top: -16px;
+  right: 0;
+  z-index: 9999;
+}
+
+/* Responsive adjustments for Add Card Placeholder inside smaller grids */
+.act-img-grid .jf-add-card-placeholder {
+  min-height: 110px;
+  padding: 10px;
+  font-size: 0.8rem;
+  border-radius: 12px;
+}
+
+.velocity-track .jf-add-card-placeholder {
+  min-width: 180px;
+  height: 100%;
+  min-height: 180px;
+  flex-shrink: 0;
+  padding: 16px;
+}
+
 

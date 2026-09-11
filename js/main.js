@@ -140,9 +140,26 @@
   const folders = document.querySelectorAll('.folder-unit');
   folders.forEach(folder => {
     // Click or keyboard toggle
-    folder.addEventListener('click', () => {
+    folder.addEventListener('click', (e) => {
+      // Don't toggle or navigate if clicking edit overlay or button
+      if (e.target.closest('.jf-card-edit-overlay') || e.target.closest('.jf-btn-card-edit')) return;
+
+      // If clicking directly on a paper, handled by paper lightbox
+      if (e.target.closest('.folder-paper')) return;
+
+      // If clicking the folder hint ("Open ↗"), open link
+      if (e.target.closest('.folder-hint')) {
+        const url = folder.getAttribute('data-behance') || folder.getAttribute('data-pdf');
+        if (url) {
+          e.stopPropagation();
+          window.open(url, '_blank', 'noopener');
+          return;
+        }
+      }
+
       folder.classList.toggle('folder-open');
     });
+
     folder.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -167,6 +184,29 @@
         p.style.marginTop = '';
       });
     });
+  });
+
+  // Global delegated click for folder papers: Opens image in Lightbox!
+  document.addEventListener('click', (e) => {
+    const paper = e.target.closest('.folder-paper');
+    if (paper) {
+      if (e.target.closest('.jf-card-edit-overlay') || e.target.closest('.jf-btn-card-edit')) return;
+      e.stopPropagation();
+      e.preventDefault();
+
+      const img = paper.querySelector('img');
+      const titleEl = paper.querySelector('.fp-title');
+      const folder = paper.closest('.folder-unit');
+      const folderName = folder ? (folder.querySelector('.folder-name')?.textContent.trim() || 'Project') : 'Project';
+      const paperTitle = (titleEl ? titleEl.textContent.trim() : 'Preview') + ' — ' + folderName;
+      const actionUrl = folder ? (folder.getAttribute('data-behance') || folder.getAttribute('data-pdf')) : null;
+      const isPdf = !!(folder && folder.getAttribute('data-pdf'));
+      const src = (img ? img.getAttribute('src') : null) || paper.getAttribute('data-lightbox');
+
+      if (src && window.openPortfolioLightbox) {
+        window.openPortfolioLightbox(src, paperTitle, actionUrl, isPdf);
+      }
+    }
   });
 })();
 
@@ -1106,6 +1146,7 @@ function initPortfolioLightbox() {
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
+  window.openPortfolioLightbox = openLightbox;
 
   function closeLightbox() {
     modal.classList.remove('active');
@@ -1125,6 +1166,9 @@ function initPortfolioLightbox() {
   document.addEventListener('click', (e) => {
     const trigger = e.target.closest('[data-lightbox]');
     if (!trigger) return;
+
+    // Folder container itself toggles open/close; only inner papers open lightbox
+    if (trigger.classList.contains('folder-unit')) return;
 
     // If clicking directly on a link that has a full URL, and isn't the trigger itself, let default happen
     if (e.target.closest('a') && e.target.closest('a') !== trigger && e.target.closest('a').getAttribute('href')?.startsWith('http')) {
@@ -1226,15 +1270,18 @@ function initContactMsgForm() {
    10. CATEGORY FOLDERS BEHANCE DIRECT LINKS
    ============================================================ */
 function initFolderBehanceLinks() {
-  const folders = document.querySelectorAll('.folder-unit');
-  folders.forEach(f => {
-    f.addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
+    const hint = e.target.closest('.folder-hint');
+    if (hint) {
       if (e.target.closest('.jf-card-edit-overlay') || e.target.closest('.jf-btn-card-edit')) return;
-      const behanceUrl = f.getAttribute('data-behance') || f.getAttribute('data-pdf');
+      const folder = hint.closest('.folder-unit');
+      if (!folder) return;
+      const behanceUrl = folder.getAttribute('data-behance') || folder.getAttribute('data-pdf');
       if (behanceUrl) {
+        e.stopPropagation();
         window.open(behanceUrl, '_blank', 'noopener');
       }
-    });
+    }
   });
 }
 
@@ -1581,6 +1628,7 @@ function initPortfolioStudio() {
     // Ensure all cards and media have edit overlays
     attachCardEditOverlays();
     attachFolderPlaceholders();
+    attachAllGalleryAddButtons();
     attachC360Button();
     attachSectionReorderBars();
     initPaletteEditor();
@@ -1726,6 +1774,19 @@ function initPortfolioStudio() {
     }
   }
 
+  function attachAllGalleryAddButtons() {
+    const gallerySelectors = '.cat-showcase-grid, .bento-gallery-grid, .bento-grid, .act-img-grid, #velocityTrackA';
+    document.querySelectorAll(gallerySelectors).forEach(grid => {
+      if (!grid.querySelector('.jf-add-card-placeholder')) {
+        const ph = document.createElement('div');
+        ph.className = 'jf-add-card-placeholder';
+        ph.onclick = function() { window.openNewCardDialog(this); };
+        ph.innerHTML = '<span style="font-size:1.6rem; line-height:1;">+</span><span>Add Image Card</span>';
+        grid.appendChild(ph);
+      }
+    });
+  }
+
   function attachFolderPlaceholders() {
     document.querySelectorAll('.cat-folders-row').forEach(row => {
       if (!row.querySelector('.jf-add-folder-placeholder')) {
@@ -1809,12 +1870,45 @@ function initPortfolioStudio() {
         });
       }
 
+
+      // Restore dynamically added custom gallery cards
+      const savedCustomCards = localStorage.getItem('jf_custom_cards');
+      if (savedCustomCards) {
+        try {
+          const customList = JSON.parse(savedCustomCards);
+          customList.forEach(rec => {
+            let target = null;
+            if (rec.containerId) target = document.getElementById(rec.containerId);
+            if (!target && rec.containerClass) {
+              const selector = rec.containerClass === 'bento' ? '.bento-gallery-grid, .bento-grid' :
+                               rec.containerClass === 'cat' ? '.cat-showcase-grid' :
+                               rec.containerClass === 'act' ? '.act-img-grid' :
+                               rec.containerClass === 'velocity' ? '.velocity-track' : '.cat-showcase-grid';
+              const allTargets = document.querySelectorAll(selector);
+              target = allTargets[rec.containerIndex || 0] || allTargets[0];
+            }
+            if (target && !target.querySelector(`[data-card-id="${rec.id}"]`)) {
+              const cardNode = createCustomCardElement(rec.id, rec.cardData, rec.containerClass);
+              const placeholder = target.querySelector('.jf-add-card-placeholder');
+              if (placeholder) target.insertBefore(cardNode, placeholder);
+              else target.appendChild(cardNode);
+            }
+          });
+        } catch (e) {
+          console.warn('Error restoring custom cards:', e);
+        }
+      }
+
       // Restore Folder Edits
       const savedFolders = localStorage.getItem('jf_folder_edits');
       if (savedFolders) {
         const foldersData = JSON.parse(savedFolders);
         Object.keys(foldersData).forEach(fid => {
-          const folderEl = document.querySelector(`[data-folder-id="${fid}"]`);
+          let folderEl = document.querySelector(`[data-folder-id="${fid}"]`);
+          if (!folderEl && fid.startsWith('folder-')) {
+            const raw = fid.replace('folder-', '');
+            folderEl = document.querySelector(`[data-folder="${raw}"]`);
+          }
           const data = foldersData[fid];
           if (folderEl && data) {
             const fName = folderEl.querySelector('.folder-name');
@@ -1840,7 +1934,15 @@ function initPortfolioStudio() {
             }
             if (h4 && data.title) h4.textContent = data.title;
             if (p && data.desc) p.textContent = data.desc;
-            if (data.behance) folderEl.setAttribute('data-behance', data.behance);
+            if (data.behance) {
+              if (data.behance.endsWith('.pdf')) {
+                folderEl.setAttribute('data-pdf', data.behance);
+                folderEl.removeAttribute('data-behance');
+              } else {
+                folderEl.setAttribute('data-behance', data.behance);
+                folderEl.removeAttribute('data-pdf');
+              }
+            }
             if (fp1Img && data.img1) fp1Img.src = data.img1;
             if (fp1Title && data.img1Label) fp1Title.textContent = data.img1Label;
             if (fp2Img && data.img2) fp2Img.src = data.img2;
@@ -1877,6 +1979,82 @@ function initPortfolioStudio() {
     } catch (e) {
       console.warn('Error loading saved edits:', e);
     }
+  }
+
+
+  function createCustomCardElement(cardId, cardData, containerClass) {
+    let card;
+    if (containerClass === 'video' || cardData.mediaType === 'video' || cardData.videoUrl) {
+      card = document.createElement('div');
+      card.className = 'video-card-3d';
+      card.setAttribute('data-card-id', cardId);
+      card.setAttribute('data-video', cardData.videoUrl || '');
+      card.setAttribute('data-title', cardData.title || 'Video Showcase');
+      card.innerHTML = `
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <div class="video-card-thumb">
+          <img src="${cardData.videoPoster || 'assets/portfolio_works/aero-1.png'}" alt="${cardData.title}" loading="lazy">
+          <div class="video-play-badge">▶</div>
+        </div>
+        <div class="video-card-meta">
+          <span class="video-card-tag">SHOWCASE</span>
+          <h4 class="video-card-title">${cardData.title}</h4>
+          <p class="video-card-desc">${cardData.desc || ''}</p>
+        </div>
+      `;
+    } else if (containerClass === 'bento') {
+      card = document.createElement('div');
+      card.className = `bento-cell ${cardData.span || 'bento-span-1x1'}`;
+      card.setAttribute('data-card-id', cardId);
+      card.setAttribute('data-lightbox', cardData.img || 'assets/portfolio_works/notey-cover.webp');
+      card.setAttribute('data-title', cardData.title || 'Bento Showcase');
+      if (cardData.behance) card.setAttribute('data-behance', cardData.behance);
+      card.innerHTML = `
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="bento-img" loading="lazy" style="object-position:${cardData.focal || 'center'};">
+        <div class="bento-overlay">
+          <span class="bento-tag">Bento Feature</span>
+          <p class="bento-title">${cardData.title}</p>
+        </div>
+      `;
+    } else if (containerClass === 'act') {
+      card = document.createElement('div');
+      card.className = 'act-img-box';
+      card.setAttribute('data-card-id', cardId);
+      card.setAttribute('data-lightbox', cardData.img || 'assets/portfolio_works/notey-cover.webp');
+      card.setAttribute('data-title', cardData.title || 'Visual Proof');
+      card.innerHTML = `
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" loading="lazy">
+        <div class="act-img-caption">${cardData.title} ↗</div>
+      `;
+    } else if (containerClass === 'velocity') {
+      card = document.createElement('div');
+      card.className = 'velocity-card';
+      card.setAttribute('data-card-id', cardId);
+      card.setAttribute('data-lightbox', cardData.img || 'assets/portfolio_works/notey-cover.webp');
+      card.innerHTML = `
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="velocity-img" loading="lazy">
+        <span class="velocity-badge">${cardData.title}</span>
+      `;
+    } else {
+      card = document.createElement('div');
+      card.className = 'cat-img-card';
+      card.setAttribute('data-card-id', cardId);
+      card.setAttribute('data-lightbox', cardData.img || 'assets/portfolio_works/notey-cover.webp');
+      card.setAttribute('data-title', cardData.title || 'Project Showcase');
+      if (cardData.behance) card.setAttribute('data-behance', cardData.behance);
+      card.innerHTML = `
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" loading="lazy" style="object-position:${cardData.focal || 'center'};">
+        <div class="cat-card-overlay">
+          <div class="cat-card-title"><span>${cardData.title}</span><span>↗</span></div>
+          <span class="cat-card-tag">${cardData.desc || 'Design Showcase'}</span>
+        </div>
+      `;
+    }
+    return card;
   }
 
   // Open Card Editor (Supports images, videos, avatars, velocity cards, and timeline cards)
@@ -1974,6 +2152,10 @@ function initPortfolioStudio() {
           const saved = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
           delete saved[cardId];
           localStorage.setItem('jf_card_edits', JSON.stringify(saved));
+
+          const custom = JSON.parse(localStorage.getItem('jf_custom_cards') || '[]');
+          const updatedCustom = custom.filter(c => c.id !== cardId);
+          localStorage.setItem('jf_custom_cards', JSON.stringify(updatedCustom));
         }
         closeCardModal();
       }
@@ -2060,67 +2242,20 @@ function initPortfolioStudio() {
         } else if (activeAddTargetContainer) {
           // Creating brand new card
           const newCardId = `card-new-${Date.now()}`;
-          const isBento = activeAddTargetContainer.classList.contains('bento-gallery-grid');
+          const isBento = activeAddTargetContainer.classList.contains('bento-gallery-grid') || activeAddTargetContainer.classList.contains('bento-grid');
+          const isCatShowcase = activeAddTargetContainer.classList.contains('cat-showcase-grid');
+          const isActImg = activeAddTargetContainer.classList.contains('act-img-grid');
+          const isVelocity = activeAddTargetContainer.classList.contains('velocity-track');
           const isVideoContainer = activeAddTargetContainer.classList.contains('video-turnstile-grid') || isVideo;
 
-          let newCard;
-          if (isVideoContainer) {
-            newCard = document.createElement('div');
-            newCard.className = 'video-card-3d';
-            newCard.setAttribute('data-card-id', newCardId);
-            newCard.setAttribute('data-video', cardData.videoUrl);
-            newCard.setAttribute('data-title', cardData.title);
-            newCard.innerHTML = `
-              <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
-              <div class="video-card-thumb">
-                <img src="${cardData.videoPoster || 'assets/portfolio_works/aero-1.png'}" alt="${cardData.title}" loading="lazy">
-                <div class="video-play-badge">▶</div>
-              </div>
-              <div class="video-card-meta">
-                <span class="video-card-tag">NEW VIDEO</span>
-                <h4 class="video-card-title">${cardData.title}</h4>
-                <p class="video-card-desc">${cardData.desc || 'High engagement commercial video showcase.'}</p>
-              </div>
-            `;
-          } else if (isBento) {
-            newCard = document.createElement('div');
-            newCard.className = `bento-cell ${cardData.span}`;
-            newCard.setAttribute('data-card-id', newCardId);
-            newCard.setAttribute('data-lightbox', cardData.img);
-            newCard.setAttribute('data-title', cardData.title);
-            if (cardData.behance) newCard.setAttribute('data-behance', cardData.behance);
-            newCard.innerHTML = `
-              <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
-              <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="bento-img" loading="lazy" style="object-position:${cardData.focal};">
-              <div class="bento-overlay">
-                <span class="bento-tag">Bento Feature</span>
-                <p class="bento-title">${cardData.title}</p>
-              </div>
-            `;
-          } else {
-            // Standard Motion Tile / Showcase Card
-            newCard = document.createElement('div');
-            newCard.className = 'mt-card';
-            newCard.setAttribute('data-card-id', newCardId);
-            newCard.setAttribute('data-cat', 'stationery');
-            newCard.setAttribute('data-lightbox', cardData.img);
-            newCard.setAttribute('data-title', cardData.title);
-            if (cardData.behance) newCard.setAttribute('data-behance', cardData.behance);
-            newCard.innerHTML = `
-              <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
-              <div class="mt-card-media">
-                <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="mt-img" loading="lazy" style="object-position:${cardData.focal};">
-                <div class="mt-badge-top"><span class="mt-tag-brand">CUSTOM WORK</span></div>
-              </div>
-              <div class="mt-card-info">
-                <div class="mt-title-row">
-                  <h3>${cardData.title}</h3>
-                  <span class="mt-arrow">↗</span>
-                </div>
-                <p>${cardData.desc || 'Custom design showcase card.'}</p>
-              </div>
-            `;
-          }
+          let containerClass = 'cat';
+          if (isVideoContainer) containerClass = 'video';
+          else if (isBento) containerClass = 'bento';
+          else if (isActImg) containerClass = 'act';
+          else if (isVelocity) containerClass = 'velocity';
+          else if (isCatShowcase) containerClass = 'cat';
+
+          const newCard = createCustomCardElement(newCardId, cardData, containerClass);
 
           // Insert before placeholder button
           const placeholder = activeAddTargetContainer.querySelector('.jf-add-card-placeholder');
@@ -2129,6 +2264,28 @@ function initPortfolioStudio() {
           } else {
             activeAddTargetContainer.appendChild(newCard);
           }
+
+          // Compute containerIndex among matching containers
+          const selectorMap = {
+            bento: '.bento-gallery-grid, .bento-grid',
+            cat: '.cat-showcase-grid',
+            act: '.act-img-grid',
+            velocity: '.velocity-track',
+            video: '.video-turnstile-grid'
+          };
+          const allMatching = Array.from(document.querySelectorAll(selectorMap[containerClass] || '.cat-showcase-grid'));
+          const containerIndex = allMatching.indexOf(activeAddTargetContainer);
+
+          // Save to jf_custom_cards
+          const customList = JSON.parse(localStorage.getItem('jf_custom_cards') || '[]');
+          customList.push({
+            id: newCardId,
+            containerId: activeAddTargetContainer.id || null,
+            containerClass: containerClass,
+            containerIndex: containerIndex >= 0 ? containerIndex : 0,
+            cardData: cardData
+          });
+          localStorage.setItem('jf_custom_cards', JSON.stringify(customList));
 
           const saved = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
           saved[newCardId] = cardData;
@@ -2287,14 +2444,15 @@ function initPortfolioStudio() {
     activeAddFolderRow = null;
 
     if (!activeEditFolder.getAttribute('data-folder-id')) {
-      activeEditFolder.setAttribute('data-folder-id', `folder-${Date.now()}`);
+      const folderKey = activeEditFolder.getAttribute('data-folder');
+      activeEditFolder.setAttribute('data-folder-id', folderKey ? `folder-${folderKey}` : `folder-${Date.now()}`);
     }
 
     const folderId = activeEditFolder.getAttribute('data-folder-id');
     const folderName = activeEditFolder.querySelector('.folder-name');
     const folderCat = activeEditFolder.querySelector('.folder-cat');
     const folderTab = activeEditFolder.querySelector('.folder-tab');
-    const behance = activeEditFolder.getAttribute('data-behance') || '';
+    const behance = activeEditFolder.getAttribute('data-behance') || activeEditFolder.getAttribute('data-pdf') || '';
     const h4 = activeEditFolder.querySelector('.folder-caption-info h4');
     const p = activeEditFolder.querySelector('.folder-caption-info p');
 
@@ -2405,8 +2563,18 @@ function initPortfolioStudio() {
 
       function renderFolderHTML(el, data) {
         el.setAttribute('data-folder-id', folderId);
-        if (data.behance) el.setAttribute('data-behance', data.behance);
-        el.setAttribute('data-lightbox', data.img1);
+        if (data.behance) {
+          if (data.behance.endsWith('.pdf')) {
+            el.setAttribute('data-pdf', data.behance);
+            el.removeAttribute('data-behance');
+          } else {
+            el.setAttribute('data-behance', data.behance);
+            el.removeAttribute('data-pdf');
+          }
+        } else {
+          el.removeAttribute('data-behance');
+          el.removeAttribute('data-pdf');
+        }
         el.setAttribute('data-title', data.title);
 
         el.innerHTML = `
