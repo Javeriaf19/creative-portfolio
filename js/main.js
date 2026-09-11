@@ -687,7 +687,7 @@ let c360Data = [
     title: "NoteySTUFF Stationery Brand",
     category: "BRANDING & PACKAGING",
     desc: "0-to-1 brand identity, custom notebooks & packaging.",
-    img: "assets/portfolio_works/notey-cover.webp",
+    img: "assets/portfolio_works/notey-360-custom.png",
     link: "https://www.behance.net/gallery/248952345/Notey-Stuff-Stationery-Brand-Case-Study?platform=direct"
   },
   {
@@ -701,7 +701,7 @@ let c360Data = [
     title: "Takhleeq Karian Social System",
     category: "SOCIAL MEDIA SYSTEM",
     desc: "Visual guidelines & high-engagement content system.",
-    img: "assets/portfolio_works/takhleeq-1.png",
+    img: "assets/portfolio_works/takhleeq-360-custom.png",
     link: "https://www.behance.net/gallery/254336339/Takhleeq-Karian-Social-Media-Content-System"
   },
   {
@@ -724,12 +724,40 @@ let c360Data = [
     desc: "Dark-mode AI infographics & neural data design.",
     img: "assets/portfolio_works/neurostats-1.png",
     link: "https://www.behance.net/gallery/217808789/Carasouel-Post-Designs-For-NeuroStats-Network"
+  },
+  {
+    title: "KidFit Branding and Identity",
+    category: "YOUTH ATHLETIC & EDITORIAL",
+    desc: "Youth athletic brand guide, workout manuals & visual system.",
+    img: "assets/portfolio_works/kidfit-360.png",
+    link: "assets/KidFit.pdf"
+  },
+  {
+    title: "Kairos — Pitch Deck",
+    category: "PITCH DECK & PRESENTATION",
+    desc: "High-impact investor pitch deck and visual presentation design.",
+    img: "assets/portfolio_works/kairos-pitch-deck.png",
+    link: "#"
   }
 ];
 
 try {
   const savedC360 = localStorage.getItem('jf_c360_data');
-  if (savedC360) c360Data = JSON.parse(savedC360);
+  if (savedC360) {
+    const parsed = JSON.parse(savedC360);
+    if (Array.isArray(parsed) && parsed.length >= 8) {
+      parsed.forEach((item, idx) => {
+        if (item.img && item.img.startsWith('data:')) {
+          if (idx === 0) item.img = 'assets/portfolio_works/notey-360-custom.png';
+          else if (idx === 2) item.img = 'assets/portfolio_works/takhleeq-360-custom.png';
+          else if (idx === 6) item.img = 'assets/portfolio_works/kidfit-360.png';
+          else if (idx === 7) item.img = 'assets/portfolio_works/kairos-pitch-deck.png';
+        }
+      });
+      c360Data = parsed;
+      localStorage.setItem('jf_c360_data', JSON.stringify(c360Data));
+    }
+  }
 } catch (e) {
   console.warn('Could not load saved 360 data:', e);
 }
