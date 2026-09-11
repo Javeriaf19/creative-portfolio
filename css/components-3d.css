@@ -3258,32 +3258,57 @@ a.about-meta-chip:hover svg {
   color: #FFFFFF !important;
 }
 
-/* Motion Tiles Gallery Specifics */
+/* Motion Tiles Gallery Specifics (Crisp High-Contrast on White Cards) */
 .mt-title-row h3 {
-  color: #FFFFFF !important;
+  color: #0A0A0A !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  transition: color 0.25s ease !important;
+}
+
+.mt-card:hover .mt-title-row h3 {
+  color: #C0005E !important;
 }
 
 .mt-card-info p {
-  color: rgba(255, 255, 255, 0.78) !important;
+  color: #444444 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.55 !important;
+}
+
+.mt-arrow {
+  color: #C0005E !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
 }
 
 .g-filter-btn {
-  color: rgba(255, 255, 255, 0.88) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #1A1424 !important;
+  background: #FAF0F5 !important;
+  border: 1.5px solid rgba(192, 0, 94, 0.22) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  padding: 9px 22px !important;
+  border-radius: 999px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
 }
 
 .g-filter-btn:hover {
-  background: rgba(255, 62, 136, 0.22) !important;
-  border-color: #FF3E88 !important;
-  color: #FFFFFF !important;
+  background: rgba(192, 0, 94, 0.12) !important;
+  border-color: #C0005E !important;
+  color: #C0005E !important;
+  transform: translateY(-2px) !important;
 }
 
 .g-filter-btn.active {
-  background: linear-gradient(135deg, #FF3E88, #7928CA) !important;
+  background: linear-gradient(135deg, #C0005E, #52008C) !important;
   border-color: transparent !important;
   color: #FFFFFF !important;
-  box-shadow: 0 4px 20px rgba(255, 62, 136, 0.5) !important;
+  box-shadow: 0 4px 18px rgba(192, 0, 94, 0.35) !important;
 }
 
 /* Credentials Block High Contrast */
