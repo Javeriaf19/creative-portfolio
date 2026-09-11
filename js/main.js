@@ -1486,6 +1486,13 @@ function initPortfolioStudio() {
   const pinSubmit = document.getElementById('btnPinSubmit');
   const pinCancel = document.getElementById('btnPinCancel');
   const pinError = document.getElementById('jfPinError');
+  const btnSaveAll = document.getElementById('btnStudioSaveAll');
+  if (btnSaveAll) {
+    btnSaveAll.addEventListener('click', () => {
+      saveTextEdits();
+      showSaveToast('✓ All Edits Successfully Saved!');
+    });
+  }
   const btnSaveLive = document.getElementById('btnStudioSaveLive');
   const btnAddGallery = document.getElementById('btnStudioAddGallery');
   const btnExport = document.getElementById('btnStudioExport');
@@ -1545,6 +1552,7 @@ function initPortfolioStudio() {
     });
   }
 
+  assignStableTextIds();
   restoreSavedEdits();
 
   const isAuth = sessionStorage.getItem('jf_studio_auth') === 'true';
@@ -1605,6 +1613,77 @@ function initPortfolioStudio() {
     });
   }
 
+
+  function showSaveToast(msg = '✓ Changes Saved') {
+    let toast = document.getElementById('jfSaveToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'jfSaveToast';
+      toast.style.cssText = 'position:fixed; top:24px; left:50%; transform:translateX(-50%); background:#059669; color:#fff; padding:10px 24px; border-radius:999px; font-family:"Space Grotesk",sans-serif; font-size:0.88rem; font-weight:700; z-index:9999999; box-shadow:0 10px 30px rgba(5,150,105,0.45); pointer-events:none; transition:all 0.3s cubic-bezier(0.16,1,0.3,1); opacity:0;';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(-12px)';
+    }, 1800);
+  }
+
+  function assignStableTextIds() {
+    const textSelectors = 'h1, h2, h3, h4, h5, p, .cat-badge, .cat-sub, .folder-name, .folder-cat, .bento-tag, .bento-title, .stat-num, .stat-label, .mt-tag-brand, .mt-stat-pill, .act-role, .act-desc, .act-chip, .act-duration, .act-work-type, .act-company, .exp-badge-now, .exp-badge-award, .act-img-caption, .case-title, .case-sub, .cat-card-tag, .cat-card-title span';
+
+    document.querySelectorAll(textSelectors).forEach((el) => {
+      if (el.closest('#jfStudioFab') || el.closest('.jf-modal-backdrop') || el.closest('.jf-section-reorder-bar')) return;
+      if (el.hasAttribute('data-jf-id')) return;
+
+      // 1. Element's own ID
+      if (el.id) {
+        el.setAttribute('data-jf-id', el.id);
+        return;
+      }
+
+      // 2. Element inside a card
+      const card = el.closest('[data-card-id]');
+      if (card) {
+        const cardId = card.getAttribute('data-card-id');
+        const role = el.classList.contains('cat-card-tag') ? 'tag' :
+                     el.classList.contains('bento-tag') ? 'tag' :
+                     el.classList.contains('act-img-caption') ? 'caption' :
+                     el.classList.contains('velocity-badge') ? 'badge' :
+                     (el.tagName.toLowerCase().startsWith('h') || el.parentElement.classList.contains('cat-card-title') || el.classList.contains('bento-title')) ? 'title' : 'desc';
+        el.setAttribute('data-jf-id', `${cardId}_${role}`);
+        return;
+      }
+
+      // 3. Element inside a folder
+      const folder = el.closest('[data-folder-id]');
+      if (folder) {
+        const folderId = folder.getAttribute('data-folder-id');
+        const role = el.classList.contains('folder-name') ? 'name' :
+                     el.classList.contains('folder-cat') ? 'cat' :
+                     el.tagName.toLowerCase().startsWith('h') ? 'title' : 'desc';
+        el.setAttribute('data-jf-id', `${folderId}_${role}`);
+        return;
+      }
+
+      // 4. Stable container hierarchy
+      const container = el.closest('[id]');
+      const containerId = container ? container.id : 'doc';
+      const siblings = Array.from(container ? container.querySelectorAll(el.tagName) : [el]);
+      const tagIdx = siblings.indexOf(el);
+      el.setAttribute('data-jf-id', `txt_${containerId}_${el.tagName.toLowerCase()}_${tagIdx >= 0 ? tagIdx : 0}`);
+    });
+  }
+
+  let textDebounceTimer = null;
+  function debounceSaveText() {
+    clearTimeout(textDebounceTimer);
+    textDebounceTimer = setTimeout(saveTextEdits, 600);
+  }
+
   function enableStudioMode() {
     document.body.classList.add('jf-edit-active');
     if (fab) fab.style.display = 'flex';
@@ -1613,16 +1692,15 @@ function initPortfolioStudio() {
     const allTextTargets = document.querySelectorAll(
       'h1, h2, h3, h4, h5, p, .cat-badge, .cat-sub, .folder-name, .bento-tag, .bento-title, .stat-num, .stat-label, .mt-tag-brand, .mt-stat-pill, .act-role, .act-desc, .act-chip, .act-duration, .act-work-type, .act-company, .exp-badge-now, .exp-badge-award, .act-img-caption, .case-title, .case-sub'
     );
-    allTextTargets.forEach((el, idx) => {
+    assignStableTextIds();
+    restoreSavedEdits();
+
+    allTextTargets.forEach((el) => {
       if (el.closest('#jfStudioFab') || el.closest('.jf-modal-backdrop') || el.closest('.jf-section-reorder-bar')) return;
       el.setAttribute('contenteditable', 'true');
       el.setAttribute('data-jf-editable', 'true');
-      if (!el.getAttribute('data-jf-id')) {
-        const sec = el.closest('section');
-        const secPrefix = sec ? sec.id : 'doc';
-        el.setAttribute('data-jf-id', el.id ? el.id : `txt_${secPrefix}_${idx}`);
-      }
       el.addEventListener('blur', saveTextEdits);
+      el.addEventListener('input', debounceSaveText);
     });
 
     // Ensure all cards and media have edit overlays
@@ -1812,13 +1890,16 @@ function initPortfolioStudio() {
     }
   }
 
-  function saveTextEdits() {
-    const data = {};
+    function saveTextEdits() {
+    const data = JSON.parse(localStorage.getItem('jf_text_edits') || '{}');
     document.querySelectorAll('[data-jf-id]').forEach(el => {
       const id = el.getAttribute('data-jf-id');
-      if (id) data[id] = el.innerHTML;
+      if (id && el.hasAttribute('contenteditable')) {
+        data[id] = el.innerHTML;
+      }
     });
     localStorage.setItem('jf_text_edits', JSON.stringify(data));
+    showSaveToast('✓ Text Saved');
   }
 
   function restoreSavedEdits() {
@@ -1892,6 +1973,9 @@ function initPortfolioStudio() {
               const placeholder = target.querySelector('.jf-add-card-placeholder');
               if (placeholder) target.insertBefore(cardNode, placeholder);
               else target.appendChild(cardNode);
+              // Also apply any saved edits on this custom card
+              const allCardEdits = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
+              if (allCardEdits[rec.id]) applyCardData(cardNode, allCardEdits[rec.id]);
             }
           });
         } catch (e) {
@@ -2082,8 +2166,8 @@ function initPortfolioStudio() {
 
     const imgEl = activeEditCard.querySelector('img') || (activeEditCard.id === 'holoProfileCard' ? document.getElementById('holoAvatarImg') : null);
     const videoEl = activeEditCard.querySelector('video');
-    const titleEl = activeEditCard.querySelector('.bento-title, h3, h4, .video-card-title, .holo-card-name, .id-card-title, .act-img-caption, .velocity-badge');
-    const descEl = activeEditCard.querySelector('p, .video-card-desc, .holo-card-tag');
+    const titleEl = activeEditCard.querySelector('.cat-card-title span, .cat-card-title, .bento-title, h3, h4, .video-card-title, .holo-card-name, .id-card-title, .act-img-caption, .velocity-badge');
+    const descEl = activeEditCard.querySelector('.cat-card-tag, .bento-tag, p, .video-card-desc, .holo-card-tag');
     const behanceLink = activeEditCard.getAttribute('data-behance') || (activeEditCard.tagName === 'A' ? activeEditCard.href : '');
 
     if (ceTitle) ceTitle.value = titleEl ? titleEl.textContent.trim() : '';
@@ -2162,21 +2246,31 @@ function initPortfolioStudio() {
     });
   }
 
-  function applyCardData(card, data) {
+    function applyCardData(card, data) {
     const isVideo = data.mediaType === 'video' || (data.videoUrl && data.videoUrl.length > 0);
-    const titleEl = card.querySelector('.bento-title, h3, h4, .video-card-title, .holo-card-name, .id-card-title');
-    const descEl = card.querySelector('p, .video-card-desc, .holo-card-tag');
 
-    if (titleEl && data.title) titleEl.textContent = data.title;
-    if (descEl && data.desc) descEl.textContent = data.desc;
+    // 1. Update Title across all card types
+    const catTitleSpan = card.querySelector('.cat-card-title span:first-child');
+    if (catTitleSpan && data.title) {
+      catTitleSpan.textContent = data.title;
+    } else {
+      const titleEl = card.querySelector('.bento-title, h3, h4, .video-card-title, .holo-card-name, .id-card-title, .act-img-caption, .velocity-badge');
+      if (titleEl && data.title) titleEl.textContent = data.title;
+    }
 
-    // Aceternity Timeline caption
-    const actCaption = card.querySelector('.act-img-caption');
-    if (actCaption && data.title) actCaption.textContent = data.title;
+    // 2. Update Description / Tag across all card types
+    const catTag = card.querySelector('.cat-card-tag');
+    const bentoTag = card.querySelector('.bento-tag');
+    if (catTag && data.desc) {
+      catTag.textContent = data.desc;
+    } else if (bentoTag && data.desc) {
+      bentoTag.textContent = data.desc;
+    } else {
+      const descEl = card.querySelector('p, .video-card-desc, .holo-card-tag');
+      if (descEl && data.desc) descEl.textContent = data.desc;
+    }
 
-    // Velocity Gallery badge
-    const velBadge = card.querySelector('.velocity-badge');
-    if (velBadge && data.title) velBadge.textContent = data.title;
+    if (data.title) card.setAttribute('data-title', data.title);
 
     if (data.behance) {
       card.setAttribute('data-behance', data.behance);
