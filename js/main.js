@@ -963,12 +963,16 @@ function initCarousel360() {
    INTERACTIVE NOTEBOOK LOOKBOOKS (DUAL CLEAN IMAGE FLIPBOOKS)
    ============================================================ */
 let noteyPagesData = [
-  'assets/portfolio_works/notey-cover.webp',
-  'assets/portfolio_works/notey-spread.webp',
-  'assets/portfolio_works/notey-mockup1.webp',
-  'assets/portfolio_works/notey-pkg1.webp',
-  'assets/portfolio_works/notey-real-cover.png',
-  'assets/portfolio_works/notey-real-spread.png'
+  'assets/NoteyStuff/ChatGPT Image Sep 9, 2026, 12_32_54 AM.png',
+  'assets/NoteyStuff/image.png_202609082008.jpeg',
+  'assets/NoteyStuff/image.png_2K_202609080326.jpeg',
+  'assets/NoteyStuff/iss_notebook_ko_kardo_change_2K_202609082241.jpeg',
+  'assets/NoteyStuff/Notebook_e-commerce_product_phot._2K_202609080356.jpeg',
+  'assets/NoteyStuff/Notebook_product_mockup_creation_2K_202609080048.jpeg',
+  'assets/NoteyStuff/notey-mockup-9.png',
+  'assets/NoteyStuff/notey-pkg1.png',
+  'assets/NoteyStuff/notey-real-cover.png',
+  'assets/NoteyStuff/Stationery_product_mockup_creation_2K_202609082047.jpeg'
 ];
 
 let mykitabPagesData = [
@@ -1448,21 +1452,21 @@ function initVideoCarouselModal() {
 /* ============================================================
    14. FRAMER 3D GALLERY STACK INTERACTION
    ============================================================ */
-function initGalleryStack() {
-  const deck = document.getElementById('galleryStackDeck');
-  const prevBtn = document.getElementById('btnStackPrev');
-  const nextBtn = document.getElementById('btnStackNext');
-  const counter = document.getElementById('stackCounter');
+function setup3DStack(deckId, prevId, nextId, counterId, cardClass) {
+  const deck = document.getElementById(deckId);
+  const prevBtn = document.getElementById(prevId);
+  const nextBtn = document.getElementById(nextId);
+  const counter = document.getElementById(counterId);
   if (!deck) return;
 
-  const cards = Array.from(deck.querySelectorAll('.gallery-stack-card'));
+  const cards = Array.from(deck.querySelectorAll(cardClass));
   const total = cards.length;
   let activeIndex = 0;
 
   function updateStack() {
     cards.forEach((card, idx) => {
       const pos = (idx - activeIndex + total) % total;
-      card.className = `gallery-stack-card stack-pos-${pos}`;
+      card.className = `${cardClass.replace('.', '')} ${pos < 4 ? 'pos-' + pos : 'pos-hidden'}`;
     });
     if (counter) counter.textContent = `${activeIndex + 1} / ${total}`;
   }
@@ -1493,6 +1497,11 @@ function initGalleryStack() {
   });
 
   updateStack();
+}
+
+function initGalleryStack() {
+  setup3DStack('stackDeckDigital', 'btnStackDigitalPrev', 'btnStackDigitalNext', 'stackCounterDigital', '.stack-card-art');
+  setup3DStack('stackDeckHand', 'btnStackHandPrev', 'btnStackHandNext', 'stackCounterHand', '.stack-card-art');
 }
 
 /* ============================================================
@@ -3209,3 +3218,78 @@ document.addEventListener('visibilitychange', () => {
     el.style.animationPlayState = document.hidden ? 'paused' : 'running';
   });
 });
+
+
+/* ============================================================
+   3D LECTERN PRESENTATION SLIDE SWITCHER
+   ============================================================ */
+window.switchLecternSlide = function(slideIndex) {
+  const slides = document.querySelectorAll('.lectern-slide-item');
+  const buttons = document.querySelectorAll('.lectern-thumb-btn');
+  if (!slides.length) return;
+
+  slides.forEach((s, idx) => {
+    if (idx === slideIndex) {
+      s.classList.add('active');
+    } else {
+      s.classList.remove('active');
+    }
+  });
+
+  buttons.forEach((b, idx) => {
+    if (idx === slideIndex) {
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+};
+
+/* ============================================================
+   INSTAGRAM COMPONENT INTERACTIVE ACTIONS
+   ============================================================ */
+window.toggleIgLike = function(btn) {
+  btn.classList.toggle('liked');
+  const card = btn.closest('.ig-post-card');
+  if (!card) return;
+  const likesEl = card.querySelector('.ig-post-likes span');
+  if (likesEl) {
+    let count = parseInt(likesEl.textContent.replace(/,/g, ''), 10) || 1200;
+    if (btn.classList.contains('liked')) {
+      count++;
+    } else {
+      count = Math.max(0, count - 1);
+    }
+    likesEl.textContent = count.toLocaleString();
+  }
+};
+
+window.toggleIgSave = function(btn) {
+  btn.classList.toggle('saved');
+};
+
+window.submitIgComment = function(inputEl) {
+  if (!inputEl) return;
+  const text = inputEl.value.trim();
+  if (!text) return;
+  const card = inputEl.closest('.ig-post-card');
+  if (!card) return;
+  const commentsBox = card.querySelector('.ig-comments-box');
+  if (commentsBox) {
+    const row = document.createElement('div');
+    row.className = 'ig-comment-row';
+    row.innerHTML = `<strong>@visitor</strong> <span>${escapeHtml(text)}</span>`;
+    commentsBox.appendChild(row);
+  }
+  inputEl.value = '';
+};
+
+function escapeHtml(str) {
+  return str.replace(/[&<>'"]/g, tag => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;'
+  }[tag] || tag));
+}
