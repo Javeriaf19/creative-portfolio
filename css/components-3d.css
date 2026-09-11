@@ -6398,3 +6398,347 @@ body.jf-edit-active .folder-unit .jf-card-edit-overlay {
   object-fit: cover;
   display: block;
 }
+
+/* ============================================================
+   PORTFOLIO ALTERNATING SECTION COLOR THEMES (SOLID - NO GRADIENTS)
+   ============================================================ */
+
+/* 1. SOLID WHITE SECTIONS: Branding, Editorial, Packaging, Gallery */
+.portfolio-sec-white {
+  background: #FFFFFF !important;
+  color: #111118 !important;
+  padding: 90px 0 !important;
+  position: relative !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.portfolio-sec-white .sec-title,
+.portfolio-sec-white .cat-title,
+.portfolio-sec-white h2,
+.portfolio-sec-white h3,
+.portfolio-sec-white h4,
+.portfolio-sec-white .folder-caption-info h4 {
+  color: #111118 !important;
+}
+
+.portfolio-sec-white .sec-sub,
+.portfolio-sec-white .cat-sub,
+.portfolio-sec-white p,
+.portfolio-sec-white .folder-caption-info p {
+  color: #444455 !important;
+}
+
+.portfolio-sec-white .cat-badge {
+  color: #C2185B !important;
+  background: rgba(194, 24, 91, 0.08) !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+}
+
+.portfolio-sec-white .branding-showcase-meta h4 {
+  color: #111118 !important;
+  font-size: 1.4rem !important;
+}
+
+.portfolio-sec-white .branding-showcase-meta p {
+  color: #444455 !important;
+}
+
+.portfolio-sec-white .case-inner {
+  background: #F7F5FA !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.portfolio-sec-white .case-inner .sec-title {
+  color: #111118 !important;
+}
+
+.portfolio-sec-white .case-inner .case-para {
+  color: #444455 !important;
+}
+
+.portfolio-sec-white .palette-label {
+  color: #111118 !important;
+}
+
+.portfolio-sec-white .case-metrics .metric .m-num {
+  color: #C2185B !important;
+}
+
+.portfolio-sec-white .case-metrics .metric .m-label {
+  color: #555566 !important;
+}
+
+.portfolio-sec-white .flipbook-card-item {
+  background: #F8F6FC !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.portfolio-sec-white .flipbook-brand-title {
+  color: #111118 !important;
+}
+
+.portfolio-sec-white .flipbook-page-counter {
+  color: #555566 !important;
+}
+
+.portfolio-sec-white .editorial-proj-card {
+  background: #F8F6FC !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.portfolio-sec-white .editorial-card-title {
+  color: #111118 !important;
+}
+
+.portfolio-sec-white .editorial-card-desc {
+  color: #444455 !important;
+}
+
+.portfolio-sec-white .mt-card-info h3 {
+  color: #111118 !important;
+}
+
+.portfolio-sec-white .mt-card-info p {
+  color: #555566 !important;
+}
+
+.portfolio-sec-white .g-filter-btn {
+  background: #F0EDF5 !important;
+  color: #222233 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.portfolio-sec-white .g-filter-btn.active,
+.portfolio-sec-white .g-filter-btn:hover {
+  background: #C2185B !important;
+  color: #FFFFFF !important;
+  border-color: #C2185B !important;
+}
+
+/* 2. SOLID DEEP BLACK SECTIONS: Social Media & Industries (NO GRADIENT) */
+.portfolio-sec-black {
+  background: #08070E !important;
+  color: #FFFFFF !important;
+  padding: 90px 0 !important;
+  position: relative !important;
+}
+
+.portfolio-sec-black .sec-title,
+.portfolio-sec-black .cat-title,
+.portfolio-sec-black h2,
+.portfolio-sec-black h3,
+.portfolio-sec-black h4 {
+  color: #FFFFFF !important;
+}
+
+.portfolio-sec-black .sec-sub,
+.portfolio-sec-black .cat-sub,
+.portfolio-sec-black p {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.portfolio-sec-black .cat-badge {
+  color: #FF70A6 !important;
+  background: rgba(255, 43, 133, 0.12) !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+}
+
+.portfolio-sec-black .ind-card-ticker {
+  background: #110E1C !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.portfolio-sec-black .ind-card-ticker .ind-name {
+  color: #FFFFFF !important;
+}
+
+.portfolio-sec-black .ind-card-ticker .ind-brand {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Velocity Marquee Full-Screen Breakout & Dark BG */
+.velocity-marquee-multi {
+  width: 100vw !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+  background: #040308 !important;
+  padding: 36px 0 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 3. SOLID DEEP PURPLE SECTION: Print & Marketing (NO GRADIENT) */
+.portfolio-sec-purple {
+  background: #160829 !important;
+  color: #FFFFFF !important;
+  padding: 90px 0 !important;
+  position: relative !important;
+}
+
+.portfolio-sec-purple .sec-title,
+.portfolio-sec-purple .cat-title,
+.portfolio-sec-purple h2,
+.portfolio-sec-purple h3,
+.portfolio-sec-purple h4 {
+  color: #FFFFFF !important;
+}
+
+.portfolio-sec-purple .sec-sub,
+.portfolio-sec-purple .cat-sub,
+.portfolio-sec-purple p {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.portfolio-sec-purple .cat-badge {
+  color: #C084FC !important;
+  background: rgba(192, 132, 252, 0.15) !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+}
+
+.portfolio-sec-purple .editorial-proj-card {
+  background: #200D38 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.portfolio-sec-purple .editorial-card-title {
+  color: #FFFFFF !important;
+}
+
+.portfolio-sec-purple .editorial-card-desc {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* 4. SOLID DEEP DARK PINK / WINE SECTION: Illustration (NO GRADIENT) */
+.portfolio-sec-darkpink {
+  background: #1D0618 !important;
+  color: #FFFFFF !important;
+  padding: 90px 0 !important;
+  position: relative !important;
+}
+
+.portfolio-sec-darkpink .sec-title,
+.portfolio-sec-darkpink .cat-title,
+.portfolio-sec-darkpink h2,
+.portfolio-sec-darkpink h3,
+.portfolio-sec-darkpink h4 {
+  color: #FFFFFF !important;
+}
+
+.portfolio-sec-darkpink .sec-sub,
+.portfolio-sec-darkpink .cat-sub,
+.portfolio-sec-darkpink p {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.portfolio-sec-darkpink .cat-badge {
+  color: #FF70A6 !important;
+  background: rgba(255, 112, 166, 0.15) !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+}
+
+.portfolio-sec-darkpink .stack-col-title {
+  color: #FFFFFF !important;
+  font-size: 1.45rem !important;
+  font-weight: 800 !important;
+}
+
+.portfolio-sec-darkpink .stack-col-sub {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.portfolio-sec-darkpink .stack-column-unit {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.portfolio-sec-darkpink .stack-arrow-btn {
+  background: #C2185B !important;
+  color: #FFFFFF !important;
+  border: none !important;
+}
+
+.portfolio-sec-darkpink .stack-count-indicator {
+  color: #FFFFFF !important;
+}
+
+/* BUTTONS: View on Behance - Dark Pink with White text */
+.btn-branding-behance,
+.btn-bento-behance {
+  background: #C2185B !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  font-weight: 700 !important;
+  padding: 10px 20px !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 14px rgba(194, 24, 91, 0.35) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  text-decoration: none !important;
+}
+
+.btn-branding-behance span,
+.btn-bento-behance span {
+  color: #FFFFFF !important;
+}
+
+.btn-branding-behance svg,
+.btn-bento-behance svg {
+  stroke: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+.btn-branding-behance:hover,
+.btn-bento-behance:hover {
+  background: #AD1457 !important;
+  color: #FFFFFF !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(173, 20, 87, 0.45) !important;
+}
+
+/* BUTTON: Download Resume in About Me */
+.btn-resume-act {
+  background: #C2185B !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  box-shadow: 0 4px 15px rgba(194, 24, 91, 0.35) !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+
+.btn-resume-act span {
+  color: #FFFFFF !important;
+}
+
+.btn-resume-act svg {
+  stroke: #FFFFFF !important;
+}
+
+.btn-resume-act:hover {
+  background: #AD1457 !important;
+  color: #FFFFFF !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(173, 20, 87, 0.45) !important;
+}
+
+/* Navbar Resume link consistency */
+#nl-resume {
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  padding: 6px 14px !important;
+}
