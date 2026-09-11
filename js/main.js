@@ -967,7 +967,7 @@ let noteyPagesData = [
   'assets/NoteyStuff/image.png_202609082008.jpeg',
   'assets/NoteyStuff/image.png_2K_202609080326.jpeg',
   'assets/NoteyStuff/iss_notebook_ko_kardo_change_2K_202609082241.jpeg',
-  'assets/NoteyStuff/Notebook_e-commerce_product_phot._2K_202609080356.jpeg',
+  'assets/NoteyStuff/notey-notebook-5.jpeg',
   'assets/NoteyStuff/Notebook_product_mockup_creation_2K_202609080048.jpeg',
   'assets/NoteyStuff/notey-mockup-9.png',
   'assets/NoteyStuff/notey-pkg1.png',
