@@ -594,17 +594,23 @@ function initGSAP() {
 
   // Section title reveals on scroll
   gsap.utils.toArray('.sec-title').forEach(el => {
-    gsap.from(el, {
-      y: 40, opacity: 0, duration: 0.85, ease: 'power3.out',
-      scrollTrigger: { trigger: el, start: 'top 86%' }
-    });
+    gsap.fromTo(el,
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.85, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 86%' }
+      }
+    );
   });
 
   // About ID card 3D entrance
-  gsap.from('#idCardWrapper', {
-    rotateY: -35, x: -60, opacity: 0, duration: 1.2, ease: 'power3.out',
-    scrollTrigger: { trigger: '#about', start: 'top 75%' }
-  });
+  if (document.getElementById('idCardWrapper')) {
+    gsap.fromTo('#idCardWrapper',
+      { rotateY: -35, x: -60, opacity: 0 },
+      { rotateY: 0, x: 0, opacity: 1, duration: 1.2, ease: 'power3.out',
+        scrollTrigger: { trigger: '#about', start: 'top 75%' }
+      }
+    );
+  }
 
   // Process steps stagger
   if (document.querySelector('.proc-step')) {
@@ -617,26 +623,42 @@ function initGSAP() {
   }
 
   // Contact section title
-  gsap.from('.contact-title', {
-    y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
-    scrollTrigger: { trigger: '#contact', start: 'top 80%' }
-  });
+  if (document.querySelector('.contact-title')) {
+    gsap.fromTo('.contact-title',
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '#contact', start: 'top 80%' }
+      }
+    );
+  }
 
   // Bento items stagger reveal
-  gsap.from('.bento-item', {
-    y: 50, opacity: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out',
-    scrollTrigger: { trigger: '#work', start: 'top 75%' }
-  });
+  if (document.querySelector('.bento-item')) {
+    gsap.fromTo('.bento-item',
+      { y: 50, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7, stagger: 0.08, ease: 'power3.out',
+        scrollTrigger: { trigger: '#work', start: 'top 75%' }
+      }
+    );
+  }
 
   // Case study entrance
-  gsap.from('.case-content', {
-    x: -50, opacity: 0, duration: 0.9, ease: 'power3.out',
-    scrollTrigger: { trigger: '#case-study', start: 'top 75%' }
-  });
-  gsap.from('.case-visual', {
-    x: 50, opacity: 0, duration: 0.9, ease: 'power3.out',
-    scrollTrigger: { trigger: '#case-study', start: 'top 75%' }
-  });
+  if (document.querySelector('.case-content')) {
+    gsap.fromTo('.case-content',
+      { x: -50, opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: '#case-study', start: 'top 75%' }
+      }
+    );
+  }
+  if (document.querySelector('.case-visual')) {
+    gsap.fromTo('.case-visual',
+      { x: 50, opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: '#case-study', start: 'top 75%' }
+      }
+    );
+  }
 }
 
 /* ============================================================
@@ -3038,6 +3060,25 @@ function initPortfolioStudio() {
         if (cloneFab) cloneFab.style.display = 'none';
 
         docClone.querySelectorAll('.jf-modal-backdrop').forEach(m => m.style.display = 'none');
+
+        // Clean GSAP inline animation styles so saved HTML is clean and always visible
+        docClone.querySelectorAll('[style]').forEach(el => {
+          let s = el.getAttribute('style') || '';
+          if (s) {
+            s = s.replace(/translate:\s*none;?/gi, '')
+                 .replace(/rotate:\s*none;?/gi, '')
+                 .replace(/scale:\s*none;?/gi, '')
+                 .replace(/opacity:\s*0(?:\.\d+)?(?:;|$)/gi, (m) => el.id === 'c360CenterImg' ? m : '')
+                 .replace(/transform:\s*translate[^\;]+;?/gi, '')
+                 .replace(/transition-delay:[^\;]+;?/gi, '')
+                 .trim();
+            if (!s) el.removeAttribute('style');
+            else el.setAttribute('style', s);
+          }
+        });
+        docClone.querySelectorAll('.reveal').forEach(el => {
+          el.classList.add('visible');
+        });
 
         const htmlContent = '<!DOCTYPE html>\n' + docClone.outerHTML;
 
