@@ -1570,7 +1570,11 @@ function initPortfolioStudio() {
       if (el.closest('#jfStudioFab') || el.closest('.jf-modal-backdrop') || el.closest('.jf-section-reorder-bar')) return;
       el.setAttribute('contenteditable', 'true');
       el.setAttribute('data-jf-editable', 'true');
-      if (!el.getAttribute('data-jf-id')) el.setAttribute('data-jf-id', `jf-txt-${idx}`);
+      if (!el.getAttribute('data-jf-id')) {
+        const sec = el.closest('section');
+        const secPrefix = sec ? sec.id : 'doc';
+        el.setAttribute('data-jf-id', el.id ? el.id : `txt_${secPrefix}_${idx}`);
+      }
       el.addEventListener('blur', saveTextEdits);
     });
 
@@ -1758,16 +1762,41 @@ function initPortfolioStudio() {
 
   function restoreSavedEdits() {
     try {
+      // 1. Clean up volatile/corrupt text edits from localStorage to prevent misplaced texts across sections
+      if (localStorage.getItem('jf_text_edits')) {
+        try {
+          const savedObj = JSON.parse(localStorage.getItem('jf_text_edits') || '{}');
+          const keys = Object.keys(savedObj);
+          if (keys.some(k => /^jf-txt-\d+$/.test(k))) {
+            localStorage.removeItem('jf_text_edits');
+          }
+        } catch (e) {
+          localStorage.removeItem('jf_text_edits');
+        }
+      }
+
+      // 2. Validate section order against canonical sections
+      const canonicalSecs = ['home', 'showcase-360', 'about', 'experience', 'work', 'case-study', 'clients', 'gallery', 'explore-behance', 'video-showcase', 'testimonials'];
+      const savedSecOrder = localStorage.getItem('jf_section_order');
+      if (savedSecOrder) {
+        try {
+          const parsedOrder = JSON.parse(savedSecOrder);
+          if (!Array.isArray(parsedOrder) || !canonicalSecs.every(id => parsedOrder.includes(id))) {
+            localStorage.removeItem('jf_section_order');
+          }
+        } catch (e) {
+          localStorage.removeItem('jf_section_order');
+        }
+      }
+
       restoreSectionOrder();
 
       const savedText = localStorage.getItem('jf_text_edits');
       if (savedText) {
         const data = JSON.parse(savedText);
-        document.querySelectorAll('h1, h2, h3, h4, h5, p, .cat-badge, .cat-sub, .folder-name, .bento-tag, .bento-title, .stat-num, .stat-label, .mt-tag-brand, .mt-stat-pill, .act-role, .act-desc, .act-chip, .act-duration, .act-work-type, .act-company').forEach((el, idx) => {
-          if (el.closest('#jfStudioFab') || el.closest('.jf-modal-backdrop')) return;
-          const id = el.getAttribute('data-jf-id') || `jf-txt-${idx}`;
-          el.setAttribute('data-jf-id', id);
-          if (data[id]) el.innerHTML = data[id];
+        Object.keys(data).forEach(id => {
+          const el = document.querySelector(`[data-jf-id="${id}"]`) || document.getElementById(id);
+          if (el && data[id]) el.innerHTML = data[id];
         });
       }
 
