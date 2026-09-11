@@ -7056,3 +7056,233 @@ html, body {
   text-align: center !important;
   max-width: 760px !important;
 }
+
+
+/* ==========================================================
+   TARGETED FIXES: HERO GAP, NAVBAR, TIMELINE & PACKAGING MOBILE
+   ========================================================== */
+
+/* 1. Eliminate Hero Empty Space on all viewports */
+#home.hero {
+  min-height: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  background: #FAF5F7 !important;
+}
+
+/* 2. Desktop & Mobile Navbar Refinement */
+.navbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  padding: 8px 0 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.nav-container {
+  max-width: 1320px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.nav-logo {
+  flex-shrink: 0 !important;
+}
+
+.nav-links {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex-wrap: nowrap !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.nav-link {
+  font-size: 0.82rem !important;
+  padding: 6px 10px !important;
+  white-space: nowrap !important;
+}
+
+#nl-resume {
+  font-size: 0.82rem !important;
+  padding: 6px 10px !important;
+}
+
+.btn-nav-hire {
+  padding: 7px 16px !important;
+  font-size: 0.8rem !important;
+}
+
+/* 3. Mobile Experience Timeline Fix (NEVER GO OUT OF SCREEN) */
+@media (max-width: 768px) {
+  .act-timeline-section {
+    padding: 60px 0 80px !important;
+    overflow-x: hidden !important;
+  }
+  .act-timeline-container {
+    margin-top: 30px !important;
+    padding-left: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .act-timeline-track {
+    left: 14px !important;
+  }
+  .act-timeline-item {
+    display: block !important;
+    padding-top: 24px !important;
+    padding-left: 38px !important;
+    gap: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .act-sticky-header {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  .act-node-wrap {
+    left: -38px !important;
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .act-node-circle {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  .act-node-dot {
+    width: 8px !important;
+    height: 8px !important;
+  }
+  .act-sticky-title {
+    display: none !important;
+  }
+  .act-mobile-title {
+    display: block !important;
+    font-size: 1.5rem !important;
+    margin-bottom: 8px !important;
+    color: #FFFFFF !important;
+  }
+  .act-content {
+    padding-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .act-card {
+    padding: 18px 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 16px !important;
+    box-sizing: border-box !important;
+  }
+  .act-role {
+    font-size: 1.15rem !important;
+  }
+  .act-desc {
+    font-size: 0.9rem !important;
+    line-height: 1.55 !important;
+  }
+  .act-img-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .act-img-box {
+    height: 180px !important;
+  }
+}
+
+/* 4. Mobile Packaging Flipbook Fix (NEVER GO OUT OF SCREEN) */
+@media (max-width: 768px) {
+  .dual-flipbook-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+    margin-top: 24px !important;
+  }
+  .dual-flipbook-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .flipbook-card-item {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px 12px !important;
+    box-sizing: border-box !important;
+    border-radius: 16px !important;
+  }
+  .flipbook-image-stage {
+    height: 240px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .flipbook-brand-title {
+    font-size: 0.92rem !important;
+  }
+}
+
+/* 5. Mobile Navbar Flyout */
+@media (max-width: 960px) {
+  .nav-links {
+    display: none !important;
+  }
+  .nav-toggle {
+    display: flex !important;
+  }
+  .nav-links.mobile-open {
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 54px !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: #0E0A18 !important;
+    padding: 20px 24px !important;
+    gap: 6px !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.85) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.12) !important;
+    z-index: 99999 !important;
+  }
+  .nav-links.mobile-open .nav-link {
+    color: #FFFFFF !important;
+    font-size: 1rem !important;
+    padding: 10px 14px !important;
+    border-radius: 8px !important;
+  }
+  .nav-links.mobile-open .nav-link:hover,
+  .nav-links.mobile-open .nav-link.active {
+    color: #FF2A85 !important;
+    background: rgba(255, 42, 133, 0.18) !important;
+  }
+}
+
+/* 6. Fix Video Showcase & Mockups Sizing on Mobile */
+@media (max-width: 768px) {
+  .ios-phone-frame {
+    width: 280px !important;
+    height: 560px !important;
+    border-radius: 36px !important;
+  }
+  .video-mockup-row {
+    gap: 20px !important;
+  }
+  .phone-mockup-3d {
+    width: 260px !important;
+    height: 480px !important;
+  }
+}

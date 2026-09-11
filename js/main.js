@@ -1374,10 +1374,21 @@ function initIosVideoPlayer() {
 
   function togglePlay() {
     if (video.paused) {
-      video.play().then(() => {
-        playBtn.style.opacity = '0';
-        playBtn.textContent = '⏸';
-      }).catch(() => {});
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          playBtn.style.opacity = '0';
+          playBtn.textContent = '⏸';
+        }).catch(() => {
+          // Mobile browser policy: mute and retry
+          video.muted = true;
+          if (muteBtn) muteBtn.textContent = '🔇';
+          video.play().then(() => {
+            playBtn.style.opacity = '0';
+            playBtn.textContent = '⏸';
+          }).catch(e => console.warn('Play failed:', e));
+        });
+      }
     } else {
       video.pause();
       playBtn.style.opacity = '1';
