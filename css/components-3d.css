@@ -3551,7 +3551,24 @@ a.about-meta-chip:hover svg {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(255, 42, 133, 0.25);
+}
+
+.pl-btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 42, 133, 0.4);
+}
+
+.pl-btn-behance {
+  background: #0057FF !important;
+  box-shadow: 0 4px 12px rgba(0, 87, 255, 0.25) !important;
+}
+
+.pl-btn-behance:hover {
+  background: #0045D8 !important;
+  box-shadow: 0 6px 18px rgba(0, 87, 255, 0.45) !important;
 }
 
 /* ==========================================================
