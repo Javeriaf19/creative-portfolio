@@ -141,13 +141,9 @@
   folders.forEach(folder => {
     // Click or keyboard toggle
     folder.addEventListener('click', (e) => {
-      // Don't toggle or navigate if clicking edit overlay or button
       if (e.target.closest('.jf-card-edit-overlay') || e.target.closest('.jf-btn-card-edit')) return;
-
-      // If clicking directly on a paper, handled by paper lightbox
       if (e.target.closest('.folder-paper')) return;
 
-      // If clicking the folder hint ("Open ↗"), open link
       if (e.target.closest('.folder-hint')) {
         const url = folder.getAttribute('data-behance') || folder.getAttribute('data-pdf');
         if (url) {
@@ -157,7 +153,12 @@
         }
       }
 
-      folder.classList.toggle('folder-open');
+      const wasOpen = folder.classList.contains('folder-open');
+      // Close other open folders in the row so fanned-out papers never collide
+      document.querySelectorAll('.folder-unit.folder-open').forEach(f => {
+        if (f !== folder) f.classList.remove('folder-open');
+      });
+      folder.classList.toggle('folder-open', !wasOpen);
     });
 
     folder.addEventListener('keydown', (e) => {
@@ -2575,6 +2576,9 @@ function initPortfolioStudio() {
     if (feImg2Label) feImg2Label.value = fp2Title ? fp2Title.textContent.trim() : '';
     if (feImg3) feImg3.value = fp3Img ? fp3Img.getAttribute('src') : '';
     if (feImg3Label) feImg3Label.value = fp3Title ? fp3Title.textContent.trim() : '';
+    if (feImg1File) feImg1File.value = '';
+    if (feImg2File) feImg2File.value = '';
+    if (feImg3File) feImg3File.value = '';
 
     const heading = document.getElementById('feModalHeading');
     if (heading) heading.textContent = 'Edit Project Folder';
@@ -2634,9 +2638,13 @@ function initPortfolioStudio() {
         readFile(feImg3File)
       ]);
 
-      const img1Src = f1 || (feImg1 ? feImg1.value.trim() : '') || 'assets/portfolio_works/notey-cover.webp';
-      const img2Src = f2 || (feImg2 ? feImg2.value.trim() : '') || 'assets/portfolio_works/notey-mockup1.webp';
-      const img3Src = f3 || (feImg3 ? feImg3.value.trim() : '') || 'assets/portfolio_works/notey-pkg1.webp';
+      const origImg1 = activeEditFolder ? activeEditFolder.querySelector('.fp-1 img')?.getAttribute('src') : '';
+      const origImg2 = activeEditFolder ? activeEditFolder.querySelector('.fp-2 img')?.getAttribute('src') : '';
+      const origImg3 = activeEditFolder ? activeEditFolder.querySelector('.fp-3 img')?.getAttribute('src') : '';
+
+      const img1Src = f1 || (feImg1 ? feImg1.value.trim() : '') || origImg1 || 'assets/portfolio_works/notey-cover.webp';
+      const img2Src = f2 || (feImg2 ? feImg2.value.trim() : '') || origImg2 || 'assets/portfolio_works/notey-mockup1.webp';
+      const img3Src = f3 || (feImg3 ? feImg3.value.trim() : '') || origImg3 || 'assets/portfolio_works/notey-pkg1.webp';
 
       const folderData = {
         name: feFolderName ? feFolderName.value.trim() : 'Project Folder',
@@ -2677,9 +2685,9 @@ function initPortfolioStudio() {
             <div class="folder-tab" style="background:${data.color}"></div>
             <div class="folder-back" style="background:${data.color}"></div>
             <div class="folder-papers">
-              <div class="folder-paper fp-1"><img src="${data.img1}" alt="${data.img1Label}" class="fp-img"><span class="fp-title">${data.img1Label}</span></div>
-              <div class="folder-paper fp-2"><img src="${data.img2}" alt="${data.img2Label}" class="fp-img"><span class="fp-title">${data.img2Label}</span></div>
-              <div class="folder-paper fp-3"><img src="${data.img3}" alt="${data.img3Label}" class="fp-img"><span class="fp-title">${data.img3Label}</span></div>
+              <div class="folder-paper fp-1" data-lightbox="${data.img1}"><img src="${data.img1}" alt="${data.img1Label}" class="fp-img"><span class="fp-title">${data.img1Label}</span></div>
+              <div class="folder-paper fp-2" data-lightbox="${data.img2}"><img src="${data.img2}" alt="${data.img2Label}" class="fp-img"><span class="fp-title">${data.img2Label}</span></div>
+              <div class="folder-paper fp-3" data-lightbox="${data.img3}"><img src="${data.img3}" alt="${data.img3Label}" class="fp-img"><span class="fp-title">${data.img3Label}</span></div>
             </div>
             <div class="folder-front" style="background:${data.color}; filter:brightness(0.85);">
               <div class="folder-label"><span class="folder-name">${data.name}</span><span class="folder-cat">${data.cat}</span></div>

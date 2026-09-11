@@ -1099,6 +1099,15 @@
   align-items: center;
   cursor: pointer;
   outline: none;
+  transition: z-index 0.2s ease;
+}
+
+.folder-unit:hover {
+  z-index: 25;
+}
+
+.folder-unit.folder-open {
+  z-index: 35 !important;
 }
 
 .folder-root {
@@ -1192,17 +1201,17 @@
 
 .folder-unit:hover .fp-1,
 .folder-unit.folder-open .fp-1 {
-  transform: translate(-105%, -65%) rotate(-14deg) scale(1);
+  transform: translate(-92%, -58%) rotate(-11deg) scale(1);
 }
 
 .folder-unit:hover .fp-2,
 .folder-unit.folder-open .fp-2 {
-  transform: translate(5%, -65%) rotate(14deg) scale(1);
+  transform: translate(-8%, -58%) rotate(11deg) scale(1);
 }
 
 .folder-unit:hover .fp-3,
 .folder-unit.folder-open .fp-3 {
-  transform: translate(-50%, -92%) rotate(3deg) scale(1.05);
+  transform: translate(-50%, -86%) rotate(1deg) scale(1.04);
   z-index: 4;
 }
 
@@ -3613,9 +3622,10 @@ a.about-meta-chip:hover svg {
 
 .cat-folders-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 24px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 36px;
+  margin-top: 24px;
+  margin-bottom: 50px;
 }
 
 .cat-showcase-grid {
