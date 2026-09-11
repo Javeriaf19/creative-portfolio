@@ -1905,18 +1905,8 @@ function initPortfolioStudio() {
 
   function restoreSavedEdits() {
     try {
-      // 1. Clean up volatile/corrupt text edits from localStorage to prevent misplaced texts across sections
-      if (localStorage.getItem('jf_text_edits')) {
-        try {
-          const savedObj = JSON.parse(localStorage.getItem('jf_text_edits') || '{}');
-          const keys = Object.keys(savedObj);
-          if (keys.some(k => /^jf-txt-\d+$/.test(k))) {
-            localStorage.removeItem('jf_text_edits');
-          }
-        } catch (e) {
-          localStorage.removeItem('jf_text_edits');
-        }
-      }
+      // 1. Ensure deterministic text IDs are assigned before restoration
+      assignStableTextIds();
 
       // 2. Validate section order against canonical sections
       const canonicalSecs = ['home', 'showcase-360', 'about', 'experience', 'work', 'case-study', 'clients', 'gallery', 'explore-behance', 'video-showcase', 'testimonials'];
