@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C0005E"/>
+      <stop offset="45%" stop-color="#8E0044"/>
+      <stop offset="100%" stop-color="#3B0028"/>
+    </linearGradient>
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FFB3DA"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Base with Soft Shadow Ring -->
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#bgGrad)"/>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="none" stroke="rgba(255, 255, 255, 0.25)" stroke-width="1.5"/>
+
+  <!-- JF Monogram Typography -->
+  <!-- J -->
+  <path d="M 27 19 L 27 38 C 27 43 23.5 45.5 19 45.5 C 15.5 45.5 13 44 11.5 42 L 13.5 38.5 C 14.5 39.8 16.5 41 19 41 C 21.5 41 23 39.5 23 37 L 23 19 Z" fill="#FFFFFF"/>
+  <!-- F -->
+  <path d="M 32 19 L 46 19 L 46 23.5 L 36.5 23.5 L 36.5 30 L 44.5 30 L 44.5 34.5 L 36.5 34.5 L 36.5 45 L 32 45 Z" fill="#FFFFFF"/>
+
+  <!-- Y2K Retro 4-Point Star Sparkle -->
+  <path d="M 49 11 C 49 16 53 17 55 17 C 53 17 49 18 49 23 C 49 18 45 17 43 17 C 45 17 49 16 49 11 Z" fill="url(#starGrad)"/>
+  <circle cx="49" cy="17" r="1.2" fill="#FFFFFF"/>
+</svg>
