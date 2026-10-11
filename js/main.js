@@ -985,7 +985,11 @@ let mykitabPagesData = [
   'assets/portfolio_works/mykitab-cover-7.png',
   'assets/portfolio_works/mykitab-cover-8.png',
   'assets/portfolio_works/mykitab-cover-9.png',
-  'assets/portfolio_works/mykitab-cover-10.png'
+  'assets/portfolio_works/mykitab-cover-10.png',
+  'assets/portfolio_works/mykitab-cover-11.png',
+  'assets/portfolio_works/mykitab-cover-12.png',
+  'assets/portfolio_works/mykitab-cover-13.png',
+  'assets/portfolio_works/mykitab-cover-14.png'
 ];
 
 function initNotebookFlipBook() {
@@ -993,7 +997,15 @@ function initNotebookFlipBook() {
     const savedNotey = localStorage.getItem('jf_flipbook_notey');
     if (savedNotey) noteyPagesData = JSON.parse(savedNotey);
     const savedMykitab = localStorage.getItem('jf_flipbook_mykitab');
-    if (savedMykitab) mykitabPagesData = JSON.parse(savedMykitab);
+    if (savedMykitab) {
+      const parsed = JSON.parse(savedMykitab);
+      // Validate saved data: only use if it has 14 items and no duplicate entries
+      if (Array.isArray(parsed) && parsed.length >= 14 && new Set(parsed).size === parsed.length) {
+        mykitabPagesData = parsed;
+      } else {
+        localStorage.removeItem('jf_flipbook_mykitab');
+      }
+    }
   } catch (e) {
     console.warn('Could not load saved flipbook pages:', e);
   }
@@ -1017,10 +1029,10 @@ function setupSingleFlipbook(idPrefix, pagesArray) {
   function renderDots() {
     if (!dotsEl) return;
     dotsEl.innerHTML = '';
-    const maxDots = Math.min(pagesArray.length, 8);
-    for (let i = 0; i < maxDots; i++) {
+    for (let i = 0; i < pagesArray.length; i++) {
       const dot = document.createElement('span');
       dot.className = `flip-dot ${i === idx ? 'active' : ''}`;
+      dot.title = `Page ${i + 1}`;
       dot.addEventListener('click', () => goToPage(i));
       dotsEl.appendChild(dot);
     }
@@ -1068,6 +1080,8 @@ function setupSingleFlipbook(idPrefix, pagesArray) {
       }, { passive: true });
     }
 
+    if (totalEl) totalEl.textContent = pagesArray.length;
+    if (pageNumEl) pageNumEl.textContent = `Page ${idx + 1}`;
     renderDots();
 }
 
