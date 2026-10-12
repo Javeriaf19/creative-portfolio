@@ -45,32 +45,36 @@
 }
 
 .about-designer-sec .container {
-  max-width: 1540px;
-  width: 96%;
+  max-width: 1220px;
+  width: 92%;
+  margin: 0 auto;
 }
 
 .about-designer-container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 60px;
+  gap: 52px;
   width: 100%;
 }
 
-/* Left: ID Card (Super Enormous & Prominent) */
+/* Left: ID Card (Elegantly Sized & Balanced) */
 .about-id-col {
-  flex: 0 0 740px;
-  max-width: 780px;
+  flex: 0 0 350px;
+  max-width: 360px;
   width: 100%;
   display: flex;
   justify-content: center;
-  position: relative;
+  position: sticky;
+  top: 90px;
+  align-self: flex-start;
+  z-index: 5;
 }
 
 .id-card-stage {
   position: relative;
   width: 100%;
-  max-width: 780px;
+  max-width: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -79,6 +83,7 @@
 
 .id-card-frame {
   width: 100%;
+  max-width: 340px;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -86,7 +91,7 @@
   overflow: visible !important;
   transform-origin: top center;
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
-  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.16)) drop-shadow(0 8px 16px rgba(209, 0, 104, 0.15));
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.14)) drop-shadow(0 6px 14px rgba(209, 0, 104, 0.14));
   animation: idCardGentleSwing 7s ease-in-out infinite alternate;
 }
 
@@ -105,17 +110,17 @@
 .id-card-frame:hover {
   animation-play-state: paused;
   transform: rotate(0deg) scale(1.05) translateY(-8px);
-  filter: drop-shadow(0 30px 45px rgba(0, 0, 0, 0.25)) drop-shadow(0 15px 30px rgba(209, 0, 104, 0.3));
+  filter: drop-shadow(0 25px 38px rgba(0, 0, 0, 0.22)) drop-shadow(0 12px 24px rgba(209, 0, 104, 0.25));
 }
 
 .id-card-render {
   width: 100%;
-  max-width: 780px;
+  max-width: 340px;
   height: auto;
   display: block;
   user-select: none;
   pointer-events: auto;
-  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.22));
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.18));
 }
 
 /* Tool Logo PNG Badges */
@@ -165,7 +170,8 @@
 /* Right: Content */
 .about-info-col {
   flex: 1;
-  max-width: 720px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .about-designer-title {
@@ -1470,14 +1476,18 @@
   .about-designer-container {
     flex-direction: column;
     text-align: center;
-    gap: 40px;
+    gap: 36px;
   }
   .about-id-col {
     margin: 0 auto;
-    flex: 1 1 100%;
-    max-width: 100%;
+    flex: 1 1 auto;
+    max-width: 320px;
     width: 100%;
+    position: static;
   }
+  .about-logos-grid,
+  .about-action-btns,
+  .about-meta-chips,
   .about-skills-flow,
   .about-certs-flow {
     justify-content: center;
