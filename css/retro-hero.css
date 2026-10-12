@@ -25,6 +25,7 @@
   z-index: 5 !important;
   width: 100% !important;
   max-width: 100% !important;
+  aspect-ratio: 16 / 9;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -37,6 +38,7 @@
 .hero-retro-img {
   width: 100% !important;
   height: auto !important;
+  aspect-ratio: 16 / 9;
   display: block !important;
   object-fit: contain !important;
   margin: 0 auto !important;
