@@ -45,7 +45,7 @@
 }
 
 .about-designer-sec .container {
-  max-width: 1220px;
+  max-width: 1300px;
   width: 92%;
   margin: 0 auto;
 }
@@ -58,10 +58,10 @@
   width: 100%;
 }
 
-/* Left: ID Card (Elegantly Sized & Balanced) */
+/* Left: ID Card (Enlarged & Prominent) */
 .about-id-col {
-  flex: 0 0 350px;
-  max-width: 360px;
+  flex: 0 0 440px;
+  max-width: 460px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -74,7 +74,7 @@
 .id-card-stage {
   position: relative;
   width: 100%;
-  max-width: 350px;
+  max-width: 440px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -83,7 +83,7 @@
 
 .id-card-frame {
   width: 100%;
-  max-width: 340px;
+  max-width: 420px;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -115,7 +115,7 @@
 
 .id-card-render {
   width: 100%;
-  max-width: 340px;
+  max-width: 420px;
   height: auto;
   display: block;
   user-select: none;
