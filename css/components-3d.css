@@ -677,6 +677,10 @@
     grid-template-columns: 1fr;
     gap: 14px;
   }
+  /* Show only 1 cover image per experience entry on mobile to eliminate 4000px dead scroll & lag */
+  .act-img-grid .act-img-box:nth-child(n+2) {
+    display: none !important;
+  }
 }
 
 .act-img-box {
