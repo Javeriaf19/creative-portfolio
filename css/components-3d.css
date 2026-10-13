@@ -5528,6 +5528,17 @@ body.jf-edit-active .folder-unit .jf-card-edit-overlay {
   width: 100%;
 }
 
+/* Limit velocity marquee rows: 3 rows on desktop, 2 rows on mobile */
+.velocity-multi-row:nth-child(n+4) {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .velocity-multi-row:nth-child(n+3) {
+    display: none !important;
+  }
+}
+
 .velocity-multi-track {
   display: flex;
   gap: 16px;
