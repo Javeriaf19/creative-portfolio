@@ -963,45 +963,59 @@ function initCarousel360() {
    INTERACTIVE NOTEBOOK LOOKBOOKS (DUAL CLEAN IMAGE FLIPBOOKS)
    ============================================================ */
 let noteyPagesData = [
-  'assets/NoteyStuff/ChatGPT Image Sep 9, 2026, 12_32_54 AM.png',
-  'assets/NoteyStuff/image.png_202609082008.jpeg',
-  'assets/NoteyStuff/image.png_2K_202609080326.jpeg',
-  'assets/NoteyStuff/iss_notebook_ko_kardo_change_2K_202609082241.jpeg',
-  'assets/NoteyStuff/notey-notebook-5.jpeg',
-  'assets/NoteyStuff/Notebook_product_mockup_creation_2K_202609080048.jpeg',
-  'assets/NoteyStuff/notey-mockup-9.png',
-  'assets/NoteyStuff/notey-pkg1.png',
-  'assets/NoteyStuff/notey-real-cover.png',
-  'assets/NoteyStuff/Stationery_product_mockup_creation_2K_202609082047.jpeg'
+  'assets/NoteyStuff/ChatGPT Image Sep 9, 2026, 12_32_54 AM.webp',
+  'assets/NoteyStuff/image.png_202609082008.webp',
+  'assets/NoteyStuff/image.png_2K_202609080326.webp',
+  'assets/NoteyStuff/iss_notebook_ko_kardo_change_2K_202609082241.webp',
+  'assets/NoteyStuff/notey-notebook-5.webp',
+  'assets/NoteyStuff/Notebook_product_mockup_creation_2K_202609080048.webp',
+  'assets/NoteyStuff/notey-mockup-9.webp',
+  'assets/NoteyStuff/notey-pkg1.webp',
+  'assets/NoteyStuff/notey-real-cover.webp',
+  'assets/NoteyStuff/Stationery_product_mockup_creation_2K_202609082047.webp'
 ];
 
 let mykitabPagesData = [
-  'assets/portfolio_works/mykitab-cover-1.png',
-  'assets/portfolio_works/mykitab-cover-2.png',
-  'assets/portfolio_works/mykitab-cover-3.png',
-  'assets/portfolio_works/mykitab-cover-4.png',
-  'assets/portfolio_works/mykitab-cover-5.png',
-  'assets/portfolio_works/mykitab-cover-6.png',
-  'assets/portfolio_works/mykitab-cover-7.png',
-  'assets/portfolio_works/mykitab-cover-8.png',
-  'assets/portfolio_works/mykitab-cover-9.png',
-  'assets/portfolio_works/mykitab-cover-10.png',
-  'assets/portfolio_works/mykitab-cover-11.png',
-  'assets/portfolio_works/mykitab-cover-12.png',
-  'assets/portfolio_works/mykitab-cover-13.png',
-  'assets/portfolio_works/mykitab-cover-14.png'
+  'assets/portfolio_works/mykitab-cover-1.webp',
+  'assets/portfolio_works/mykitab-cover-2.webp',
+  'assets/portfolio_works/mykitab-cover-3.webp',
+  'assets/portfolio_works/mykitab-cover-4.webp',
+  'assets/portfolio_works/mykitab-cover-5.webp',
+  'assets/portfolio_works/mykitab-cover-6.webp',
+  'assets/portfolio_works/mykitab-cover-7.webp',
+  'assets/portfolio_works/mykitab-cover-8.webp',
+  'assets/portfolio_works/mykitab-cover-9.webp',
+  'assets/portfolio_works/mykitab-cover-10.webp',
+  'assets/portfolio_works/mykitab-cover-11.webp',
+  'assets/portfolio_works/mykitab-cover-12.webp',
+  'assets/portfolio_works/mykitab-cover-13.webp',
+  'assets/portfolio_works/mykitab-cover-14.webp'
 ];
+
+function preloadFlipbookImages(urls) {
+  if (!Array.isArray(urls)) return;
+  urls.forEach(src => {
+    if (!src) return;
+    const img = new Image();
+    img.src = src;
+  });
+}
 
 function initNotebookFlipBook() {
   try {
     const savedNotey = localStorage.getItem('jf_flipbook_notey');
-    if (savedNotey) noteyPagesData = JSON.parse(savedNotey);
+    if (savedNotey) {
+      const parsed = JSON.parse(savedNotey);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        noteyPagesData = parsed.map(url => url.replace(/\.(png|jpe?g)$/i, '.webp'));
+      }
+    }
     const savedMykitab = localStorage.getItem('jf_flipbook_mykitab');
     if (savedMykitab) {
       const parsed = JSON.parse(savedMykitab);
       // Validate saved data: only use if it has 14 items and no duplicate entries
       if (Array.isArray(parsed) && parsed.length >= 14 && new Set(parsed).size === parsed.length) {
-        mykitabPagesData = parsed;
+        mykitabPagesData = parsed.map(url => url.replace(/\.(png|jpe?g)$/i, '.webp'));
       } else {
         localStorage.removeItem('jf_flipbook_mykitab');
       }
@@ -1010,12 +1024,17 @@ function initNotebookFlipBook() {
     console.warn('Could not load saved flipbook pages:', e);
   }
 
+  // Preload all flipbook slides into browser cache
+  preloadFlipbookImages(noteyPagesData);
+  preloadFlipbookImages(mykitabPagesData);
+
   setupSingleFlipbook('notey', noteyPagesData);
   setupSingleFlipbook('mykitab', mykitabPagesData);
 }
 
 function setupSingleFlipbook(idPrefix, pagesArray) {
   let idx = 0;
+  let isTransitioning = false;
   const imgEl = document.getElementById(`${idPrefix}ActiveImg`);
   const pageNumEl = document.getElementById(`${idPrefix}PageNum`);
   const totalEl = document.getElementById(`${idPrefix}TotalPages`);
@@ -1041,48 +1060,55 @@ function setupSingleFlipbook(idPrefix, pagesArray) {
   function goToPage(targetIdx, direction = 'next') {
     if (targetIdx < 0) targetIdx = pagesArray.length - 1;
     if (targetIdx >= pagesArray.length) targetIdx = 0;
+    if (targetIdx === idx && !isTransitioning) return;
     idx = targetIdx;
 
+    const nextSrc = pagesArray[idx];
+
+    // Update UI counters and dots immediately for responsive feel
+    if (pageNumEl) pageNumEl.textContent = `Page ${idx + 1}`;
+    if (totalEl) totalEl.textContent = pagesArray.length;
+    renderDots();
+
     if (spreadEl) {
-      spreadEl.style.transform = direction === 'next' ? 'rotateY(-25deg)' : 'rotateY(25deg)';
-      spreadEl.style.opacity = '0.4';
+      spreadEl.style.transition = 'transform 0.18s ease-out, opacity 0.18s ease-out';
+      spreadEl.style.transform = direction === 'next' ? 'rotateY(-12deg) scale(0.98)' : 'rotateY(12deg) scale(0.98)';
+      spreadEl.style.opacity = '0.75';
     }
+
+    // Swap image source instantly from memory cache
+    imgEl.src = nextSrc;
+    imgEl.setAttribute('data-lightbox', nextSrc);
 
     setTimeout(() => {
-      imgEl.src = pagesArray[idx];
-      imgEl.setAttribute('data-lightbox', pagesArray[idx]);
-      if (pageNumEl) pageNumEl.textContent = `Page ${idx + 1}`;
-      if (totalEl) totalEl.textContent = pagesArray.length;
-      renderDots();
-
       if (spreadEl) {
-        spreadEl.style.transform = 'rotateY(0deg)';
+        spreadEl.style.transform = 'rotateY(0deg) scale(1)';
         spreadEl.style.opacity = '1';
       }
-    }, 180);
+    }, 120);
   }
 
-    if (prevBtn) prevBtn.addEventListener('click', () => goToPage(idx - 1, 'prev'));
-    if (nextBtn) nextBtn.addEventListener('click', () => goToPage(idx + 1, 'next'));
+  if (prevBtn) prevBtn.addEventListener('click', () => goToPage(idx - 1, 'prev'));
+  if (nextBtn) nextBtn.addEventListener('click', () => goToPage(idx + 1, 'next'));
 
-    // Touch Swipe for Flipbook
-    if (spreadEl) {
-      let touchStartX = 0;
-      spreadEl.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-      }, { passive: true });
-      spreadEl.addEventListener('touchend', (e) => {
-        const diffX = e.changedTouches[0].screenX - touchStartX;
-        if (Math.abs(diffX) > 40) {
-          if (diffX < 0) goToPage(idx + 1, 'next');
-          else goToPage(idx - 1, 'prev');
-        }
-      }, { passive: true });
-    }
+  // Touch Swipe for Flipbook
+  if (spreadEl) {
+    let touchStartX = 0;
+    spreadEl.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    spreadEl.addEventListener('touchend', (e) => {
+      const diffX = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diffX) > 40) {
+        if (diffX < 0) goToPage(idx + 1, 'next');
+        else goToPage(idx - 1, 'prev');
+      }
+    }, { passive: true });
+  }
 
-    if (totalEl) totalEl.textContent = pagesArray.length;
-    if (pageNumEl) pageNumEl.textContent = `Page ${idx + 1}`;
-    renderDots();
+  if (totalEl) totalEl.textContent = pagesArray.length;
+  if (pageNumEl) pageNumEl.textContent = `Page ${idx + 1}`;
+  renderDots();
 }
 
 /* ============================================================
