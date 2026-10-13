@@ -734,7 +734,7 @@ function initPaletteChips() {
       const hex = chip.getAttribute('title');
       if (hex && navigator.clipboard) {
         navigator.clipboard.writeText(hex).then(() => {
-          chip.setAttribute('data-copied', '✓');
+          chip.setAttribute('data-copied', '');
           setTimeout(() => chip.removeAttribute('data-copied'), 1200);
         });
       }
@@ -1322,7 +1322,7 @@ function initContactMsgForm() {
 
       if (response.ok) {
         status.style.color = '#7cc000';
-        status.textContent = '✓ Message received! I will reply to your email shortly.';
+        status.textContent = 'Message received! I will reply to your email shortly.';
         form.reset();
       } else {
         const data = await response.json();
@@ -1433,7 +1433,7 @@ function initIosVideoPlayer() {
         }).catch(() => {
           // Mobile browser policy: mute and retry
           video.muted = true;
-          if (muteBtn) muteBtn.textContent = '🔇';
+          if (muteBtn) muteBtn.textContent = 'Mute';
           video.play().then(() => {
             playBtn.style.opacity = '0';
             playBtn.textContent = '⏸';
@@ -1454,7 +1454,7 @@ function initIosVideoPlayer() {
     muteBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       video.muted = !video.muted;
-      muteBtn.textContent = video.muted ? '🔇' : '🔊';
+      muteBtn.textContent = video.muted ? 'Mute' : 'Unmute';
     });
   }
 
@@ -1584,7 +1584,7 @@ function initPortfolioStudio() {
   if (btnSaveAll) {
     btnSaveAll.addEventListener('click', () => {
       saveTextEdits();
-      showSaveToast('✓ All Edits Successfully Saved!');
+      showSaveToast('All Edits Successfully Saved!');
     });
   }
   const btnSaveLive = document.getElementById('btnStudioSaveLive');
@@ -1708,7 +1708,7 @@ function initPortfolioStudio() {
   }
 
 
-  function showSaveToast(msg = '✓ Changes Saved') {
+  function showSaveToast(msg = 'Changes Saved') {
     let toast = document.getElementById('jfSaveToast');
     if (!toast) {
       toast = document.createElement('div');
@@ -1921,7 +1921,7 @@ function initPortfolioStudio() {
       if (!card.querySelector('.jf-card-edit-overlay')) {
         const ov = document.createElement('div');
         ov.className = 'jf-card-edit-overlay';
-        ov.innerHTML = '<button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button>';
+        ov.innerHTML = '<button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">Edit</button>';
         card.appendChild(ov);
       }
     });
@@ -1931,7 +1931,7 @@ function initPortfolioStudio() {
       if (!folder.querySelector('.jf-card-edit-overlay')) {
         const ov = document.createElement('div');
         ov.className = 'jf-card-edit-overlay';
-        ov.innerHTML = '<button type="button" class="jf-btn-card-edit" onclick="openFolderEditor(this)">✎ Edit Folder</button>';
+        ov.innerHTML = '<button type="button" class="jf-btn-card-edit" onclick="openFolderEditor(this)">Edit Folder</button>';
         folder.appendChild(ov);
       }
     });
@@ -1941,7 +1941,7 @@ function initPortfolioStudio() {
     if (c360Center && !c360Center.querySelector('.jf-card-edit-overlay')) {
       const ov = document.createElement('div');
       ov.className = 'jf-card-edit-overlay';
-      ov.innerHTML = '<button type="button" class="jf-btn-card-edit" onclick="openC360Editor()">✎ Edit Active 360</button>';
+      ov.innerHTML = '<button type="button" class="jf-btn-card-edit" onclick="openC360Editor()">Edit Active 360</button>';
       c360Center.appendChild(ov);
     }
   }
@@ -2003,7 +2003,7 @@ function initPortfolioStudio() {
       }
     });
     localStorage.setItem('jf_text_edits', JSON.stringify(data));
-    showSaveToast('✓ Text Saved');
+    showSaveToast('Text Saved');
   }
 
   function restoreSavedEdits() {
@@ -2171,7 +2171,7 @@ function initPortfolioStudio() {
       card.setAttribute('data-video', cardData.videoUrl || '');
       card.setAttribute('data-title', cardData.title || 'Video Showcase');
       card.innerHTML = `
-        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">Edit</button></div>
         <div class="video-card-thumb">
           <img src="${cardData.videoPoster || 'assets/portfolio_works/aero-1.png'}" alt="${cardData.title}" loading="lazy">
           <div class="video-play-badge">▶</div>
@@ -2190,7 +2190,7 @@ function initPortfolioStudio() {
       card.setAttribute('data-title', cardData.title || 'Bento Showcase');
       if (cardData.behance) card.setAttribute('data-behance', cardData.behance);
       card.innerHTML = `
-        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">Edit</button></div>
         <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="bento-img" loading="lazy" style="object-position:${cardData.focal || 'center'};">
         <div class="bento-overlay">
           <span class="bento-tag">Bento Feature</span>
@@ -2204,7 +2204,7 @@ function initPortfolioStudio() {
       card.setAttribute('data-lightbox', cardData.img || 'assets/portfolio_works/notey-cover.webp');
       card.setAttribute('data-title', cardData.title || 'Visual Proof');
       card.innerHTML = `
-        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">Edit</button></div>
         <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" loading="lazy">
         <div class="act-img-caption">${cardData.title} ↗</div>
       `;
@@ -2214,7 +2214,7 @@ function initPortfolioStudio() {
       card.setAttribute('data-card-id', cardId);
       card.setAttribute('data-lightbox', cardData.img || 'assets/portfolio_works/notey-cover.webp');
       card.innerHTML = `
-        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">Edit</button></div>
         <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="velocity-img" loading="lazy">
         <span class="velocity-badge">${cardData.title}</span>
       `;
@@ -2226,7 +2226,7 @@ function initPortfolioStudio() {
       card.setAttribute('data-title', cardData.title || 'Motion Showcase');
       if (cardData.behance) card.setAttribute('data-behance', cardData.behance);
       card.innerHTML = `
-        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">Edit</button></div>
         <div class="mt-card-media">
           <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" class="mt-img" loading="lazy">
           <div class="mt-badge-top">
@@ -2249,7 +2249,7 @@ function initPortfolioStudio() {
       card.setAttribute('data-title', cardData.title || 'Project Showcase');
       if (cardData.behance) card.setAttribute('data-behance', cardData.behance);
       card.innerHTML = `
-        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+        <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">Edit</button></div>
         <img src="${cardData.img || 'assets/portfolio_works/notey-cover.webp'}" alt="${cardData.title}" loading="lazy" style="object-position:${cardData.focal || 'center'};">
         <div class="cat-card-overlay">
           <div class="cat-card-title"><span>${cardData.title}</span><span>↗</span></div>
@@ -2464,7 +2464,7 @@ function initPortfolioStudio() {
           const saved = JSON.parse(localStorage.getItem('jf_card_edits') || '{}');
           saved[cardId] = cardData;
           localStorage.setItem('jf_card_edits', JSON.stringify(saved));
-          showSaveToast('✓ Card Updated Successfully!');
+          showSaveToast('Card Updated Successfully!');
         } else {
           // Fallback container if reference was lost
           if (!activeAddTargetContainer) {
@@ -2526,7 +2526,7 @@ function initPortfolioStudio() {
             saved[newCardId] = cardData;
             localStorage.setItem('jf_card_edits', JSON.stringify(saved));
 
-            showSaveToast('✓ Card Added Successfully!');
+            showSaveToast('Card Added Successfully!');
           }
         }
 
@@ -2608,7 +2608,7 @@ function initPortfolioStudio() {
       </div>
       <div class="bento-gallery-grid">
         <div class="bento-cell bento-span-2x1" data-lightbox="assets/portfolio_works/notey-cover.webp" data-title="${galData.title}">
-          <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">✎ Edit</button></div>
+          <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openCardEditor(this)">Edit</button></div>
           <img src="assets/portfolio_works/notey-cover.webp" alt="${galData.title}" class="bento-img" loading="lazy">
           <div class="bento-overlay">
             <span class="bento-tag">Featured</span>
@@ -2643,7 +2643,7 @@ function initPortfolioStudio() {
 
       renderNewGallerySection(galData, true);
       closeNewGalleryModal();
-      alert(`🎉 New Gallery "${galData.title}" created successfully! Click "+ Add Bento Card" or "✎ Edit" to add your media.`);
+      alert(` New Gallery "${galData.title}" created successfully! Click "+ Add Bento Card" or "Edit" to add your media.`);
     });
   }
 
@@ -2837,7 +2837,7 @@ function initPortfolioStudio() {
         el.setAttribute('data-title', data.title);
 
         el.innerHTML = `
-          <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openFolderEditor(this)">✎ Edit Folder</button></div>
+          <div class="jf-card-edit-overlay"><button type="button" class="jf-btn-card-edit" onclick="openFolderEditor(this)">Edit Folder</button></div>
           <div class="folder-root">
             <div class="folder-tab" style="background:${data.color}"></div>
             <div class="folder-back" style="background:${data.color}"></div>
@@ -2925,7 +2925,7 @@ function initPortfolioStudio() {
           <input type="text" class="jf-form-input fbe-page-input" value="${src}" placeholder="Image URL">
           <input type="file" accept="image/*" class="fbe-file-input">
         </div>
-        <button type="button" class="fbe-btn-del" title="Remove Page">✕</button>
+        <button type="button" class="fbe-btn-del" title="Remove Page">x</button>
       `;
 
       const input = row.querySelector('.fbe-page-input');
@@ -2961,7 +2961,7 @@ function initPortfolioStudio() {
           <input type="text" class="jf-form-input fbe-page-input" value="assets/portfolio_works/notey-cover.webp" placeholder="Image URL">
           <input type="file" accept="image/*" class="fbe-file-input">
         </div>
-        <button type="button" class="fbe-btn-del" title="Remove Page">✕</button>
+        <button type="button" class="fbe-btn-del" title="Remove Page">x</button>
       `;
       const input = row.querySelector('.fbe-page-input');
       const fileInput = row.querySelector('.fbe-file-input');
@@ -3006,7 +3006,7 @@ function initPortfolioStudio() {
       }
 
       closeFlipbookModal();
-      alert('🎉 Flipbook pages saved and updated successfully!');
+      alert(' Flipbook pages saved and updated successfully!');
     };
   }
 
@@ -3099,7 +3099,7 @@ function initPortfolioStudio() {
         localStorage.setItem('jf_c360_data', JSON.stringify(c360Data));
         initCarousel360();
         closeC360Modal();
-        alert('🎉 360 Spotlight Projects updated successfully!');
+        alert(' 360 Spotlight Projects updated successfully!');
       };
 
       if (c360ImgFileInput && c360ImgFileInput.files && c360ImgFileInput.files[0]) {
@@ -3165,7 +3165,7 @@ function initPortfolioStudio() {
             const writable = await handle.createWritable();
             await writable.write(htmlContent);
             await writable.close();
-            alert('🎉 Success! Your live index.html file has been saved with all changes permanently baked in!');
+            alert(' Success! Your live index.html file has been saved with all changes permanently baked in!');
             return;
           } catch (pickerErr) {
             if (pickerErr.name === 'AbortError') return;
@@ -3181,7 +3181,7 @@ function initPortfolioStudio() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        alert('🎉 index.html downloaded! Replace this file in your portfolio repository, and all changes will be 100% permanent on your live website for everyone!');
+        alert(' index.html downloaded! Replace this file in your portfolio repository, and all changes will be 100% permanent on your live website for everyone!');
       } catch (err) {
         console.error('Error exporting live HTML:', err);
         alert('Export failed: ' + err.message);

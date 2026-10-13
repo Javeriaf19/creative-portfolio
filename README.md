@@ -1,4 +1,4 @@
-# ✨ Javeria Farhan — Creative Portfolio & Motion Showcase
+#  Javeria Farhan — Creative Portfolio & Motion Showcase
 
 A high-performance, responsive portfolio website crafted for **Javeria Farhan** (Graphic Designer, Visual Artist & Creative Director based in Lahore, Pakistan).
 
@@ -6,9 +6,9 @@ Designed with high-contrast aesthetic balance, 3D interactive elements, Framer-i
 
 ---
 
-## 🌟 Highlights & Features
+## Highlights & Features
 
-### 🎨 Visual & Motion Showcase
+### Visual & Motion Showcase
 - **Hero & 3D Parallax:** Interactive mouse-following neon lighting, animated avatar depth, and dynamic typography.
 - **Visual Works & Motion Tiles (#gallery):** Clean, crisp high-contrast white aesthetic with interactive category filters, soft shadows, and motion hover effects.
 - **Framer Bento Galleries:** Deep-dive Bento grids for flagship branding case studies (including Noteystuff, Takhleeq Karian, and more) with direct links to verified Behance case studies.
@@ -23,19 +23,19 @@ Designed with high-contrast aesthetic balance, 3D interactive elements, Framer-i
 
 ---
 
-## 🛠️ In-Browser Studio CMS (Private Edit Mode)
+## In-Browser Studio CMS (Private Edit Mode)
 
 The website features an invisible, in-browser Live Studio CMS allowing real-time edits directly on the page:
 
 - **Instant Secret Access:** Press Ctrl + Shift + E (or open with ?edit=true) and enter the private security PIN to unlock.
 - **Inline Text Editing:** Click any headline, paragraph, or bio to edit text directly with automatic local saving.
 - **Card & Media Editor:** Replace project images, change video sources, modify Bento grid spans (1x1, 2x1, 1x2, 2x2), set image focal alignment, update titles, and customize Behance links.
-- **1-Click Live HTML Export (💾 Save Live HTML):** Exports a production-ready index.html with all edits baked in permanently.
+- **1-Click Live HTML Export (Save Live HTML):** Exports a production-ready index.html with all edits baked in permanently.
 - **Security:** Private PIN verification is secured using client-side cryptographic SHA-256 hashing—no plain-text passwords are ever committed to the repository.
 
 ---
 
-## 🚀 Getting Started & Local Testing
+## Getting Started & Local Testing
 
 Simply clone the repository and open index.html in any modern web browser:
 
@@ -52,7 +52,7 @@ start index.html
 
 ---
 
-## 🌐 Deploying to GitHub Pages or Vercel
+## Deploying to GitHub Pages or Vercel
 
 ### Option 1: GitHub Pages (Free)
 1. Go to repository **Settings** → **Pages**.
@@ -67,7 +67,7 @@ start index.html
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 `
 ├── assets/                  # High-resolution graphics, avatar, project images & videos
@@ -82,7 +82,7 @@ start index.html
 
 ---
 
-## 👩‍🎨 Credits & Contact
+## Credits & Contact
 
 - **Designer & Creator:** Javeria Farhan
 - **Location:** Lahore, Pakistan
