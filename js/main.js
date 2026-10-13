@@ -749,7 +749,7 @@ let c360Data = [
   {
     title: "NoteySTUFF Stationery Brand",
     category: "BRANDING & PACKAGING",
-    desc: "0-to-1 brand identity, custom notebooks & packaging.",
+    desc: "Brand identity built from scratch, custom notebooks & packaging.",
     img: "assets/portfolio_works/notey-360-custom.png",
     link: "https://www.behance.net/gallery/248952345/Notey-Stuff-Stationery-Brand-Case-Study?platform=direct"
   },
