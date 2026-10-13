@@ -35,13 +35,23 @@
   animation: heroFadeIn 0.8s ease-out;
 }
 
-.hero-retro-img {
+.hero-retro-img,
+.hero-retro-video {
   width: 100% !important;
   height: auto !important;
   aspect-ratio: 16 / 9;
   display: block !important;
   object-fit: contain !important;
   margin: 0 auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-retro-video {
+    display: none !important;
+  }
+  .hero-retro-img {
+    display: block !important;
+  }
 }
 
 @keyframes heroFadeIn {

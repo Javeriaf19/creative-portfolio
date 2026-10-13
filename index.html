@@ -52,6 +52,9 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Poppins:wght@600;700;800&amp;family=Space+Grotesk:wght@600;700&amp;display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Poppins:wght@600;700;800&amp;family=Space+Grotesk:wght@600;700&amp;display=swap">
 
+  <!-- Preload Critical Hero Poster Image -->
+  <link rel="preload" as="image" href="assets/retro-computer-poster.webp" type="image/webp" fetchpriority="high">
+
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
   <!-- Retro Hero Stylesheet -->
@@ -97,7 +100,11 @@
   <!-- ===== HERO SECTION ===== -->
   <section id="home" class="hero slide1-hero" aria-label="Hero">
     <div class="hero-img-wrap">
-      <img src="assets/retro-computer.gif" alt="Y2K Retro Computer Setup — Javeria Farhan Portfolio" class="hero-retro-img" fetchpriority="high" width="1920" height="1080">
+      <video class="hero-retro-video" autoplay loop muted playsinline width="1920" height="1080" poster="assets/retro-computer-poster.webp" aria-label="Y2K Retro Computer Setup — Javeria Farhan Portfolio">
+        <source src="assets/retro-computer.mp4" type="video/mp4">
+        <source src="assets/retro-computer.webm" type="video/webm">
+        <img src="assets/retro-computer-poster.webp" alt="Y2K Retro Computer Setup — Javeria Farhan Portfolio" class="hero-retro-img" width="1920" height="1080">
+      </video>
     </div>
   </section>
 
